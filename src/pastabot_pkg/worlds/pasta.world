@@ -73,74 +73,37 @@
     </model>
 
 
-    <!-- conveyor_belt start -->
-    <model name="conveyor_belt">
-      <!-- Fixed frame that can be used to refer to the belt's global pose -->
-      <model name="conveyor_belt_fixed">
-        <static>true</static>
-        <pose>1.16 4.2 0.8 0 0 -1.57079</pose>
-        <link name="link">
-          <pose>0 0 0 0 0 0</pose>
-        </link>
-      </model>
+    <include>
+    <name>table</name>
+    <uri>model://Table</uri>
+    <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
+    </include>
 
 
-      <!-- Moving component that extends and resets a prismatic joint -->
-      <model name="conveyor_belt_moving">
-        <static>false</static>
-        <pose>1.16 -4.12 0.35 0 0 -1.57079</pose>
-        <link name="belt">
-          <pose>-5 0 0 0 0 0</pose>
-          <inertial>
-            <inertia>
-              <ixx>3.8185</ixx>
-              <ixy>0</ixy>
-              <ixz>0</ixz>
-              <iyy>1781.5</iyy>
-              <iyz>0</iyz>
-              <izz>1784.72</izz>
-            </inertia>
-            <mass>100</mass>
-          </inertial>
+  <include>
+    <name>Vans_Cereal_Honey_Nut_Crunch_11_oz_box</name>
+    <uri>model://Vans_Cereal_Honey_Nut_Crunch_11_oz_box</uri>
+    <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
+    </include>
+  
 
-          <visual name="belt_visual">
-            <geometry>
-              <box>
-                <size>7.5 0.75461 0.18862</size>
-              </box>
-            </geometry>
-            <material>
-              <script>
-                <name>Gazebo/DarkGrey</name>
-              </script>
-            </material>
-          </visual>
+  <include>
+      <name>one_disposal_bin</name>
+      <uri>model://disposal_bin</uri>
+      <pose>2 -2 0 0 0 0</pose>
+    </include>
 
-          <collision name="belt_collision">
-            <geometry>
-              <box>
-                <size>7.5 0.75461 0.18862</size>
-              </box>
-            </geometry>
-            <surface>
-              <friction>
-                <ode>
-                  <mu>1.0</mu>
-                  <mu2>1.0</mu2>
-                </ode>
-                <torsional>
-                  <coefficient>1000.0</coefficient>
-                  <patch_radius>0.1</patch_radius>
-                </torsional>
-              </friction>
-            </surface>
-          </collision>
-        </link>
-      </model>
-    </model>
-    <!-- conveyor_belt end -->
+  <include>
+      <name>two_disposal_bin</name>
+      <uri>model://disposal_bin</uri>
+      <pose>2 0 0 0 0 0</pose>
+    </include>
 
-
+  <include>
+      <name>three_disposal_bin</name>
+      <uri>model://disposal_bin</uri>
+      <pose>2 2 0 0 0 0</pose>
+    </include>
 
     <model name="box_01_model">
       <allow_auto_disable>0</allow_auto_disable>
