@@ -6,7 +6,7 @@
       <background>0.700000 0.700000 0.700000 1.000000</background>
       <shadows>1</shadows>
     </scene>
-    <physics type="ode">
+    <!-- <physics type="ode">
       <gravity>0.000000 0.000000 -9.81</gravity>
       <ode>
         <solver>
@@ -24,7 +24,45 @@
       </ode>
       <real_time_update_rate>0.000000</real_time_update_rate>
       <max_step_size>0.001000</max_step_size>
+    </physics> -->
+    <!-- <physics type="bullet">
+      <gravity>0.000000 0.000000 -9.81</gravity>
+      <bullet>
+        <solver>
+          <iterations>100</iterations>
+          <sor>1.300000</sor>
+        </solver>
+        <constraints>
+          <erp>0.200000</erp>
+          <cfm>0.000000</cfm>
+        </constraints>
+      </bullet>
+      <real_time_update_rate>0.000000</real_time_update_rate>
+      <max_step_size>0.001000</max_step_size>
+    </physics> -->
+    <!-- <physics type="dart">
+      <gravity>0.000000 0.000000 -9.81</gravity>
+      <dart>
+        <solver>
+          <iterations>100</iterations>
+        </solver>
+      </dart>
+      <real_time_update_rate>0.000000</real_time_update_rate>
+      <max_step_size>0.001000</max_step_size>
+    </physics> -->
+
+    <physics type="simbody">
+      <gravity>0.000000 0.000000 -9.81</gravity>
+      <simbody>
+        <solver>
+          <accuracy>1e-9</accuracy>
+          <max_transient_velocity>0.01</max_transient_velocity>
+        </solver>
+      </simbody>
+      <real_time_update_rate>0.000000</real_time_update_rate>
+      <max_step_size>0.001000</max_step_size>
     </physics>
+
 
     <!-- Light Source -->
     <include>
@@ -78,32 +116,32 @@
 
 
     <include>
-    <name>table</name>
-    <uri>model://Table</uri>
-    <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
+      <name>table</name>
+      <uri>model://Table</uri>
+      <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
     </include>
 
 
-  <include>
-    <name>Vans_Cereal_Honey_Nut_Crunch_11_oz_box</name>
-    <uri>model://Vans_Cereal_Honey_Nut_Crunch_11_oz_box</uri>
-    <pose>0.8 0.000000 2.000000 0.000000 0.000000 0.000000</pose>
-  </include>
-  
+    <include>
+      <name>Vans_Cereal_Honey_Nut_Crunch_11_oz_box</name>
+      <uri>model://Vans_Cereal_Honey_Nut_Crunch_11_oz_box</uri>
+      <pose>0.8 0.000000 2.000000 0.000000 0.000000 0.000000</pose>
+    </include>
 
-  <include>
+
+    <include>
       <name>one_disposal_bin</name>
       <uri>model://disposal_bin</uri>
       <pose>0 0.7 0 0 0 0</pose>
     </include>
 
-  <include>
+    <include>
       <name>two_disposal_bin</name>
       <uri>model://disposal_bin</uri>
       <pose>1 0 0 0 0 0</pose>
     </include>
 
-  <include>
+    <include>
       <name>three_disposal_bin</name>
       <uri>model://disposal_bin</uri>
       <pose>0 -0.7 0 0 0 0</pose>
@@ -251,6 +289,97 @@
       </link>
       <static>0</static>
     </model>
+
+    <model name='camera'>
+      <static>1</static>
+      <pose>0 2 2 -0 0.387 -1.5708</pose>
+      <link name='camera_link'>
+        <inertial>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.000166667</ixx>
+            <iyy>0.000166667</iyy>
+            <izz>0.000166667</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>0.1 0.1 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>0.1 0.1 0.1</size>
+            </box>
+          </geometry>
+        </visual>
+        <sensor name='camera' type='camera'>
+          <camera>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>800</width>
+              <height>800</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>100</far>
+            </clip>
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>1</visualize>
+          <plugin name='camera_controller' filename='libgazebo_ros_camera.so'>
+            <alwaysOn>1</alwaysOn>
+            <updateRate>10</updateRate>
+            <cameraName>camera</cameraName>
+            <imageTopicName>image_raw</imageTopicName>
+            <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+            <frameName>camera_link</frameName>
+            <hackBaseline>0.0</hackBaseline>
+            <distortionK1>0.0</distortionK1>
+            <distortionK2>0.0</distortionK2>
+            <distortionK3>0.0</distortionK3>
+            <distortionT1>0.0</distortionT1>
+            <distortionT2>0.0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0.0</Cx>
+            <Cy>0.0</Cy>
+            <focalLength>0.0</focalLength>
+          </plugin>
+        </sensor>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
     
+    <!-- <gui fullscreen='1'>
+      <camera name='user_camera'>
+        <pose>10 0 2 0 0 0</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui> -->
+
+
   </world>
 </sdf>
