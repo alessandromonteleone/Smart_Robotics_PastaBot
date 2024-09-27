@@ -7,18 +7,18 @@
       <shadows>1</shadows>
     </scene>
     <physics type="ode">
-      <gravity>0.000000 -1.000000 -1.000000</gravity>
+      <gravity>0.000000 0.000000 -9.81</gravity>
       <ode>
         <solver>
           <type>quick</type>
-          <iters>50</iters>
+          <iters>100</iters>
           <precon_iters>0</precon_iters>
           <sor>1.300000</sor>
         </solver>
         <constraints>
           <cfm>0.000000</cfm>
           <erp>0.200000</erp>
-          <contact_max_correcting_vel>100.000000</contact_max_correcting_vel>
+          <contact_max_correcting_vel>50.000000</contact_max_correcting_vel>
           <contact_surface_layer>0.001000</contact_surface_layer>
         </constraints>
       </ode>
@@ -26,6 +26,10 @@
       <max_step_size>0.001000</max_step_size>
     </physics>
 
+    <!-- Light Source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
 
     <model name="gplane">
       <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
@@ -83,26 +87,26 @@
   <include>
     <name>Vans_Cereal_Honey_Nut_Crunch_11_oz_box</name>
     <uri>model://Vans_Cereal_Honey_Nut_Crunch_11_oz_box</uri>
-    <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
-    </include>
+    <pose>0.8 0.000000 2.000000 0.000000 0.000000 0.000000</pose>
+  </include>
   
 
   <include>
       <name>one_disposal_bin</name>
       <uri>model://disposal_bin</uri>
-      <pose>2 -2 0 0 0 0</pose>
+      <pose>0 0.7 0 0 0 0</pose>
     </include>
 
   <include>
       <name>two_disposal_bin</name>
       <uri>model://disposal_bin</uri>
-      <pose>2 0 0 0 0 0</pose>
+      <pose>1 0 0 0 0 0</pose>
     </include>
 
   <include>
       <name>three_disposal_bin</name>
       <uri>model://disposal_bin</uri>
-      <pose>2 2 0 0 0 0</pose>
+      <pose>0 -0.7 0 0 0 0</pose>
     </include>
 
     <model name="box_01_model">
