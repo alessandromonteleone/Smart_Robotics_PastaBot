@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <launch>
-    <!-- sono della base, in metri, mi permette di spostare la base del robot in gazebo -->
+    <!-- Base arguments (meters), allow to move the robot's base inside the Gazebo world -->
     <arg name="arg_x" default="0.10" />
     <arg name="arg_y" default="0.00" />
     <arg name="arg_z" default="0.30" />
@@ -9,7 +9,7 @@
     <arg name="arg_P" default="0.00" />
     <arg name="arg_Y" default="0.00" />    
     
-    <!-- Load the gofa URDF model into the parameter server -->
+    <!-- Load Gofa's URDF model into the parameter server -->
     <param name="robot_description" textfile="$(find pastabot_pkg)/urdf/gofa_arm_urdf_toolfixed.urdf"/>
         
     <!-- Start Gazebo with an empty world -->
