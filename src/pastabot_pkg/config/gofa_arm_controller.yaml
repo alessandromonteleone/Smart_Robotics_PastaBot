@@ -1,0 +1,11 @@
+gofa_arm_controller:
+  type: "position_controllers/JointTrajectoryController"
+  joints:
+    - jnt1_rev
+    - jnt2_rev
+    - jnt3_rev
+    - jnt4_rev
+    - jnt5_rev
+    - jnt6_rev
+
+  

@@ -1,0 +1,15 @@
+gofa_arm_controller: #mi controla il robot
+  type: "position_controllers/JointTrajectoryController"
+  joints:
+    - jnt1_rev
+    - jnt2_rev
+    - jnt3_rev
+    - jnt4_rev
+    - jnt5_rev
+    - jnt6_rev
+
+
+#Controller to continuously publish joint states/positions 
+joint_state_controller:
+  type: "joint_state_controller/JointStateController"
+  publish_rate: 50

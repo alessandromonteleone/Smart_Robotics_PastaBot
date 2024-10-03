@@ -6,8 +6,10 @@
       <background>0.700000 0.700000 0.700000 1.000000</background>
       <shadows>1</shadows>
     </scene>
-    <!-- <physics type="ode">
+    <physics type="ode">
       <gravity>0.000000 0.000000 -9.81</gravity>
+      <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+      <atmosphere type='adiabatic'/>
       <ode>
         <solver>
           <type>quick</type>
@@ -22,47 +24,10 @@
           <contact_surface_layer>0.001000</contact_surface_layer>
         </constraints>
       </ode>
-      <real_time_update_rate>0.000000</real_time_update_rate>
       <max_step_size>0.001000</max_step_size>
-    </physics> -->
-    <!-- <physics type="bullet">
-      <gravity>0.000000 0.000000 -9.81</gravity>
-      <bullet>
-        <solver>
-          <iterations>100</iterations>
-          <sor>1.300000</sor>
-        </solver>
-        <constraints>
-          <erp>0.200000</erp>
-          <cfm>0.000000</cfm>
-        </constraints>
-      </bullet>
-      <real_time_update_rate>0.000000</real_time_update_rate>
-      <max_step_size>0.001000</max_step_size>
-    </physics> -->
-    <!-- <physics type="dart">
-      <gravity>0.000000 0.000000 -9.81</gravity>
-      <dart>
-        <solver>
-          <iterations>100</iterations>
-        </solver>
-      </dart>
-      <real_time_update_rate>0.000000</real_time_update_rate>
-      <max_step_size>0.001000</max_step_size>
-    </physics> -->
-
-    <physics type="simbody">
-      <gravity>0.000000 0.000000 -9.81</gravity>
-      <simbody>
-        <solver>
-          <accuracy>1e-9</accuracy>
-          <max_transient_velocity>0.01</max_transient_velocity>
-        </solver>
-      </simbody>
-      <real_time_update_rate>0.000000</real_time_update_rate>
-      <max_step_size>0.001000</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
     </physics>
-
 
     <!-- Light Source -->
     <include>
@@ -206,7 +171,10 @@
             </box>
           </geometry>
           <material>
-            <script>Gazebo/Rocky</script>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Wood</name>
+            </script>
           </material>
           <cast_shadows>1</cast_shadows>
           <laser_retro>0.000000</laser_retro>
@@ -371,15 +339,6 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    
-    <!-- <gui fullscreen='1'>
-      <camera name='user_camera'>
-        <pose>10 0 2 0 0 0</pose>
-        <view_controller>orbit</view_controller>
-        <projection_type>perspective</projection_type>
-      </camera>
-    </gui> -->
-
 
   </world>
 </sdf>
