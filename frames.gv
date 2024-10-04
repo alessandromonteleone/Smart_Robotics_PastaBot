@@ -1,0 +1,3 @@
+digraph G {
+"0.6939089" -> "world_camera_link"[label="Broadcaster: /world_broadcaster\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 \nBuffer length: 0.000 sec\n"];
+}

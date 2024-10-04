@@ -1,20 +1,28 @@
 #!/usr/bin/python3
-
+import rospkg
 import rospy
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
 import time
+import os 
 
 class ImageSaver:
     def __init__(self):
-        rospy.init_node('image_saver', anonymous=True)                                              # ROS node initialization
+        rospy.init_node('image_saver', anonymous=True)  # Inizializzazione nodo ROS
         self.image_sub = rospy.Subscriber('/camera/image_raw', Image, self.image_callback)
-        self.bridge = CvBridge()                                                                    # CV Bridge for omages conversion between ROS anc CV images
-        self.save_directory = "/home/luca/Scrivania/Smart-Robotics/Progetto/Smart_Robotics_PastaBot/src/pastabot_pkg/images"
-        self.image_count = 0                                                                        # Images counter
-        self.last_saved_time = time.time()                                                          # Time inizialization
+        self.bridge = CvBridge()  # CV Bridge per la conversione delle immagini tra ROS e OpenCV
+        rospack = rospkg.RosPack()
+        self.save_directory = os.path.join(rospack.get_path('pastabot_pkg'), 'images')
         
+        # Controlla che la directory esista, altrimenti creala
+        if not os.path.exists(self.save_directory):
+            os.makedirs(self.save_directory)
+        
+        print(f"Salvataggio immagini nella directory: {self.save_directory}")
+
+        self.image_count = 0  # Contatore delle immagini
+        self.last_saved_time = time.time()  # Tempo dell'ultima immagi        
     def image_callback(self, msg):
         current_time = time.time()  # Current time
         if current_time - self.last_saved_time >= 5:
@@ -41,3 +49,5 @@ if __name__ == '__main__':
         image_saver.run()
     except rospy.ROSInterruptException:
         pass
+
+    

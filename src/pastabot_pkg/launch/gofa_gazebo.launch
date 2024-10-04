@@ -41,7 +41,10 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher"
     type="robot_state_publisher" respawn="false" output="screen"/>
 
+    <!-- Image Saver Node 
+    <node name="image_saver" pkg="pastabot_pkg" type="image_saver.py" output="screen"/>-->
+
     <!-- Image Saver Node -->
-    <node name="image_saver" pkg="pastabot_pkg" type="image_saver.py" output="screen"/>
+    <node name="object_detection" pkg="pastabot_pkg" type="object_detection.py" output="screen"/>
 
 </launch>

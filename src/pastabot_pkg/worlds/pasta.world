@@ -90,7 +90,7 @@
     <include>
       <name>Vans_Cereal_Honey_Nut_Crunch_11_oz_box</name>
       <uri>model://Vans_Cereal_Honey_Nut_Crunch_11_oz_box</uri>
-      <pose>0.8 0.000000 2.000000 0.000000 0.000000 0.000000</pose>
+      <pose>0.1 0.000000 2.000000 0.000000 0.000000 0.000000</pose>
     </include>
 
 
@@ -260,7 +260,7 @@
 
     <model name='camera'>
       <static>1</static>
-      <pose>0 2 2 -0 0.387 -1.5708</pose>
+      <pose>0 0 2.5 0 +1.5708 0</pose>
       <link name='camera_link'>
         <inertial>
           <mass>0.1</mass>

@@ -25,19 +25,19 @@
             <size>1.5 0.8 0.03</size>
           </box>
         </geometry>
-        <material>
+       <!-- <material>
           <diffuse>1.0 1.0 1.0</diffuse>
           <script>
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Wood</name>
           </script>
-          <!-- PBR for Ignition, material scripts for gazebo classic-->
+           PBR for Ignition, material scripts for gazebo classic
           <pbr>
             <metal>
               <albedo_map>model://Table/Table_Diffuse.jpg</albedo_map>
             </metal>
-          </pbr>
-        </material>
+          </pbr> 
+        </material> -->
       </visual>
       <collision name="front_left_leg">
         <pose>0.68 0.38 0.5 0 0 0</pose>
