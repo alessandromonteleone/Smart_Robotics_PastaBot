@@ -2,9 +2,9 @@
 
 <launch>
     <!-- Base arguments (meters), allow to move the robot's base inside the Gazebo world -->
-    <arg name="arg_x" default="0.10" />
+    <arg name="arg_x" default="-0.6" />
     <arg name="arg_y" default="0.00" />
-    <arg name="arg_z" default="0.30" />
+    <arg name="arg_z" default="1" />
     <arg name="arg_R" default="0.00" />
     <arg name="arg_P" default="0.00" />
     <arg name="arg_Y" default="0.00" />    

@@ -90,7 +90,7 @@
     <include>
       <name>Vans_Cereal_Honey_Nut_Crunch_11_oz_box</name>
       <uri>model://Vans_Cereal_Honey_Nut_Crunch_11_oz_box</uri>
-      <pose>0.1 0.000000 2.000000 0.000000 0.000000 0.000000</pose>
+      <pose>0 0.000000 1.00000 0.000000 0.000000 1.5708 </pose>
     </include>
 
 

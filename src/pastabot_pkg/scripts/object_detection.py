@@ -39,11 +39,11 @@ class ObjectDetection(object):
 
         for cnt in contours:
             area = cv.contourArea(cnt)
-            print('areaaa-->>>',area)
+            
             if area > 10 and area < 5000:
                 cnt = cv.approxPolyDP(cnt, 0.03*cv.arcLength(cnt, True), True)
                 object_detected.append(cnt)
-        
+                print('area-->>>',area)
         print("how many object I detect: ", len(object_detected))
         print(object_detected)
 
