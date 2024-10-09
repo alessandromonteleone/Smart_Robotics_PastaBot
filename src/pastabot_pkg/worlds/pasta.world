@@ -81,16 +81,22 @@
 
 
     <include>
-      <name>table</name>
+      <name>table1</name>
       <uri>model://Table</uri>
-      <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
+      <pose>0.750000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
+    </include>
+
+    <include>
+      <name>table2</name>
+      <uri>model://Table</uri>
+      <pose>-0.75 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
     </include>
 
 
     <include>
       <name>Vans_Cereal_Honey_Nut_Crunch_11_oz_box</name>
       <uri>model://Vans_Cereal_Honey_Nut_Crunch_11_oz_box</uri>
-      <pose>0 0.000000 1.00000 0.000000 0.000000 1.5708 </pose>
+      <pose>0.75 0.000000 1.00000 0.000000 0.000000 1.5708 </pose>
     </include>
 
 
@@ -112,155 +118,9 @@
       <pose>0 -0.7 0 0 0 0</pose>
     </include>
 
-    <model name="box_01_model">
-      <allow_auto_disable>0</allow_auto_disable>
-      <pose>2.000000 8.000000 0.500000 0.000000 -0.000000 0.000000</pose>
-      <link name="box_01_body">
-        <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
-        <inertial>
-          <pose>0.000000 0.000000 -0.500000 0.000000 -0.000000 0.000000</pose>
-          <inertia>
-            <ixx>10.000000</ixx>
-            <ixy>0.000000</ixy>
-            <ixz>0.000000</ixz>
-            <iyy>10.000000</iyy>
-            <iyz>0.000000</iyz>
-            <izz>10.000000</izz>
-          </inertia>
-          <mass>1.000000</mass>
-        </inertial>
-        <collision name="box_01_geom">
-          <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
-          <geometry>
-            <box>
-              <size>0.300000 0.500000 0.300000</size>
-            </box>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0.998000</mu>
-                <mu2>0.998000</mu2>
-                <fdir1>0.000000 0.000000 0.000000</fdir1>
-                <slip1>0.000000</slip1>
-                <slip2>0.000000</slip2>
-              </ode>
-            </friction>
-            <bounce>
-              <restitution_coefficient>0.000000</restitution_coefficient>
-              <threshold>100000.000000</threshold>
-            </bounce>
-            <contact>
-              <ode>
-                <soft_cfm>0.000000</soft_cfm>
-                <soft_erp>0.200000</soft_erp>
-                <kp>100000.000000</kp>
-                <kd>1.000000</kd>
-                <max_vel>100.000000</max_vel>
-                <min_depth>0.001000</min_depth>
-              </ode>
-            </contact>
-          </surface>
-          <laser_retro>0.000000</laser_retro>
-        </collision>
-        <visual name="box_01_geom_visual">
-          <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
-          <geometry>
-            <box>
-              <size>0.300000 0.500000 0.300000</size>
-            </box>
-          </geometry>
-          <material>
-            <script>
-              <uri>file://media/materials/scripts/gazebo.material</uri>
-              <name>Gazebo/Wood</name>
-            </script>
-          </material>
-          <cast_shadows>1</cast_shadows>
-          <laser_retro>0.000000</laser_retro>
-          <transparency>0.000000</transparency>
-        </visual>
-        <gravity>1</gravity>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-      </link>
-      <static>0</static>
-    </model>
-    <model name="box_02_model">
-      <allow_auto_disable>0</allow_auto_disable>
-      <pose>4.000000 8.000000 0.500000 0.000000 -0.000000 0.000000</pose>
-      <link name="box_02_body">
-        <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
-        <inertial>
-          <pose>0.000000 0.000000 -0.500000 0.000000 -0.000000 0.000000</pose>
-          <inertia>
-            <ixx>10.000000</ixx>
-            <ixy>0.000000</ixy>
-            <ixz>0.000000</ixz>
-            <iyy>10.000000</iyy>
-            <iyz>0.000000</iyz>
-            <izz>10.000000</izz>
-          </inertia>
-          <mass>1.000000</mass>
-        </inertial>
-        <collision name="box_02_geom">
-          <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
-          <geometry>
-            <box>
-              <size>1.000000 1.000000 1.000000</size>
-            </box>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0.998500</mu>
-                <mu2>0.998500</mu2>
-                <fdir1>0.000000 0.000000 0.000000</fdir1>
-                <slip1>0.000000</slip1>
-                <slip2>0.000000</slip2>
-              </ode>
-            </friction>
-            <bounce>
-              <restitution_coefficient>0.000000</restitution_coefficient>
-              <threshold>100000.000000</threshold>
-            </bounce>
-            <contact>
-              <ode>
-                <soft_cfm>0.000000</soft_cfm>
-                <soft_erp>0.200000</soft_erp>
-                <kp>100000.000000</kp>
-                <kd>1.000000</kd>
-                <max_vel>100.000000</max_vel>
-                <min_depth>0.001000</min_depth>
-              </ode>
-            </contact>
-          </surface>
-          <laser_retro>0.000000</laser_retro>
-        </collision>
-        <visual name="box_02_geom_visual">
-          <pose>0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
-          <geometry>
-            <box>
-              <size>1.000000 1.000000 1.000000</size>
-            </box>
-          </geometry>
-          <material>
-            <script>Gazebo/Rocky</script>
-          </material>
-          <cast_shadows>1</cast_shadows>
-          <laser_retro>0.000000</laser_retro>
-          <transparency>0.000000</transparency>
-        </visual>
-        <gravity>1</gravity>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-      </link>
-      <static>0</static>
-    </model>
-
     <model name='camera'>
       <static>1</static>
-      <pose>0 0 2.5 0 +1.5708 0</pose>
+      <pose>0.75 0 3.0 0 +1.5708 0</pose>
       <link name='camera_link'>
         <inertial>
           <mass>0.1</mass>
