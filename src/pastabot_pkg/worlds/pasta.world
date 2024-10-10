@@ -2,7 +2,7 @@
 <sdf version="1.5">
   <world name="default">
     <scene>
-      <ambient>1.000000 1.000000 1.000000 1.000000</ambient>
+      <ambient>0.4 0.4 0.4 1</ambient>
       <background>0.700000 0.700000 0.700000 1.000000</background>
       <shadows>1</shadows>
     </scene>
@@ -24,7 +24,7 @@
           <contact_surface_layer>0.001000</contact_surface_layer>
         </constraints>
       </ode>
-      <max_step_size>0.001000</max_step_size>
+      <max_step_size>0.001</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>1000</real_time_update_rate>
     </physics>
@@ -120,7 +120,7 @@
 
     <model name='camera'>
       <static>1</static>
-      <pose>0.75 0 3.0 0 +1.5708 0</pose>
+      <pose>0.75 0 2.5 0 +1.5708 0</pose>
       <link name='camera_link'>
         <inertial>
           <mass>0.1</mass>

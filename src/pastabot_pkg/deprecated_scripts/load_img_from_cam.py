@@ -16,8 +16,8 @@ class LoadImage(object):
         except CvBridgeError as e:
             print(e)
         
-        path = "/home/ros/sr09alabws/src/pkg20/imoutput/"
-        camera_image = cv2.imwrite(path + 'camera_image.png', cv_image)
+        path = "/home/alcompa/Desktop/pastabot/src/pastabot_pkg/images/"
+        camera_image = cv2.imwrite(path + 'top_view_perspective.png', cv_image)
         cv2.imshow('frame from camera', cv_image)
         cv2.waitKey(0)
 

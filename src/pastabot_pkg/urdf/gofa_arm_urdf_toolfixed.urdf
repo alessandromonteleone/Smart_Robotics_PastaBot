@@ -1,11 +1,6 @@
 <?xml version="1.0"?>
 <robot name="gofa_arm_urdf">
 
-
-    <material name="blue">
-        <color rgba="0.0 0.0 0.8 1.0"/>
-    </material>
-
     <material name="gray_dark">
         <color rgba="0.7 0.7 0.7 1.0"/>
     </material>

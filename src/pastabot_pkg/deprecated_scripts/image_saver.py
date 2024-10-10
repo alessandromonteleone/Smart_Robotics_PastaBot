@@ -22,10 +22,11 @@ class ImageSaver:
         print(f"Salvataggio immagini nella directory: {self.save_directory}")
 
         self.image_count = 0  # Contatore delle immagini
-        self.last_saved_time = time.time()  # Tempo dell'ultima immagi        
+        self.last_saved_time = time.time()  # Tempo dell'ultima immagi    
+            
     def image_callback(self, msg):
         current_time = time.time()  # Current time
-        if current_time - self.last_saved_time >= 5:
+        if current_time - self.last_saved_time >= 10:
             try:
                 # Saving image
                 cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
