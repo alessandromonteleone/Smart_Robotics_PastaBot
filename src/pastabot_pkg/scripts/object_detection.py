@@ -5,6 +5,7 @@ import numpy as np
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
+
 import cv2 as cv
 import numpy as np
 import rospy
@@ -90,7 +91,7 @@ class ObjectDetection:
         objects_detected = []
         for cnt in contours:
             area = cv.contourArea(cnt)
-            if area > 500:
+            if area > 20:
                 cnt = cv.approxPolyDP(cnt, 0.03 * cv.arcLength(cnt, True), True)
                 if cnt.shape[0] == 4:
                     objects_detected.append(cnt)
@@ -99,7 +100,13 @@ class ObjectDetection:
         print("#"*10 + " Detected ", len(objects_detected), "objects")
 
         if len(objects_detected):
-            bottom_side = objects_detected[0].squeeze(-2)[2:4, :]
+            points = objects_detected[0].squeeze(-2)
+            idx = np.argsort(points[:,-1])[2:4]
+            bottom_side = points[idx, :]
+            print('point', points.shape)
+            print('idx', idx.shape)
+            print('bottom', bottom_side.shape)
+
             push_point = (bottom_side.sum(-2) / 2).tolist()
             logger.debug("push_point (x, y)" + str(push_point))
 
