@@ -1,20 +1,19 @@
 <?xml version="1.0"?>
 <robot name="gofa_arm_urdf">
 
-    <material name="gray_dark">
-        <color rgba="0.7 0.7 0.7 1.0"/>
-    </material>
 
-
+    <!-- World Definition -->
     <link name="world"/>
 
+
+    <!-- Links Definition -->
+    <!-- BASE LINK -->
     <link name="base_link">
         <visual>
             <geometry>
                 <mesh filename="package://pastabot_pkg/mesh/GoFa_Base.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-            <material name="gray_dark"/>I            
         </visual>
         <collision>
             <geometry>
@@ -25,16 +24,18 @@
             <mass value="10"/>
             <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
-
     </link>
+    <gazebo reference="base_link">
+        <material>Gazebo/DarkGrey</material>
+    </gazebo>
 
+    <!-- LINK01 Revolutional - Visualization and Physics -->
     <link name="link01_rev1">
         <visual>
             <geometry>
                 <mesh filename="package://pastabot_pkg/mesh/GoFa_Link1.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-            <material name="gray_dark"/>
         </visual>
         <collision>
             <geometry>
@@ -42,75 +43,80 @@
             </geometry>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
         </collision>
-        
     </link>
+    <gazebo reference="link01_rev1">
+        <material>Gazebo/DarkGrey</material>
+    </gazebo>
 
+    <!-- LINK01 DH - Modeling Cinematic Transformations -->
     <link name="link01_DH">
         <inertial>
             <mass value="1"/>
-            <!--inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/-->
-            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
     </link>
 
+    <!-- LINK02 Revolutional - Visualization and Physics -->
     <link name="link02_rev2">
         <visual>
             <geometry>
-                    <mesh filename="package://pastabot_pkg/mesh/GoFa_Link2.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://pastabot_pkg/mesh/GoFa_Link2.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="0.0 0.265 0.0" rpy="1.570795 0.0 0.0"/>
-            <material name="gray_dark"/>
         </visual>
         <collision>
             <geometry>
-                    <mesh filename="package://pastabot_pkg/mesh/GoFa_Link2.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://pastabot_pkg/mesh/GoFa_Link2.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="0.0 0.265 0.0" rpy="1.570795 0.0 0.0"/>
         </collision>
-        
     </link>
+    <gazebo reference="link02_rev2">
+        <material>Gazebo/DarkGrey</material>
+    </gazebo>
 
+    <!-- LINK02 DH - Modeling Cinematic Transformations -->
     <link name="link02_DH">
         <inertial>
             <mass value="1"/>
-            <!--inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/-->
-            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
     </link>
 
+    <!-- LINK03 Revolutional - Visualization and Physics -->
     <link name="link03_rev3">
         <visual>
             <geometry>
-                    <mesh filename="package://pastabot_pkg/mesh/GoFa_Link3.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://pastabot_pkg/mesh/GoFa_Link3.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="-0.709 0.0 0.0 " rpy="1.570795 0.0 1.570795"/>
-            <material name="gray_dark"/>
         </visual>
         <collision>
             <geometry>
-                    <mesh filename="package://pastabot_pkg/mesh/GoFa_Link3.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://pastabot_pkg/mesh/GoFa_Link3.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="-0.709 0.0 0.0 " rpy="1.570795 0.0 1.570795"/>
         </collision>
-        
     </link>
+    <gazebo reference="link03_rev3">
+        <material>Gazebo/Yellow</material>
+    </gazebo>
 
+    <!-- LINK03 DH - Modeling Cinematic Transformations -->
     <link name="link03_DH">
         <inertial>
             <mass value="1"/>
-            <!--inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/-->
-            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
     </link>
 
-
+    <!-- LINK04 Revolutional - Visualization and Physics -->
     <link name="link04_rev4">
         <visual>
             <geometry>
                 <mesh filename="package://pastabot_pkg/mesh/GoFa_Link4.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="-0.819 0.0 0.0" rpy="3.14159 -1.570795 0.0"/>
-            <material name="gray_dark"/>
         </visual>
         <collision>
             <geometry>
@@ -118,25 +124,26 @@
             </geometry>
             <origin xyz="-0.819 0.0 0.0" rpy="3.14159 -1.570795 0.0"/>
         </collision>
-        
     </link>
+    <gazebo reference="link04_rev4">
+        <material>Gazebo/Yellow</material>
+    </gazebo>
 
+    <!-- LINK04 DH - Modeling Cinematic Transformations -->
     <link name="link04_DH">
         <inertial>
             <mass value="1"/>
-            <!--inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/-->
-            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
     </link>
 
-
+    <!-- LINK05 Revolutional - Visualization and Physics -->
     <link name="link05_rev5">
         <visual>
             <geometry>
                 <mesh filename="package://pastabot_pkg/mesh/GoFa_Link5.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="-0.819 -0.47 0.0" rpy="1.570795 0.0 1.570795"/>
-            <material name="gray_dark"/>
         </visual>
         <collision>
             <geometry>
@@ -144,54 +151,55 @@
             </geometry>
             <origin xyz="-0.819 -0.47 0.0" rpy="1.570795 0.0 1.570795"/>
         </collision>
-        
     </link>
+    <gazebo reference="link05_rev5">
+        <material>Gazebo/Yellow</material>
+    </gazebo>
 
+    <!-- LINK05 DH - Modeling Cinematic Transformations -->
     <link name="link05_DH">
         <inertial>
             <mass value="1"/>
-            <!--inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/-->
-            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
     </link>
 
-
+    <!-- LINK06 Revolutional - Visualization and Physics -->
     <link name="link06_rev6">
         <visual>
             <geometry>
                 <mesh filename="package://pastabot_pkg/mesh/GoFa_Link6.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="-0.899 0.0 -0.47" rpy="0.0 -1.570795 3.14159"/>
-            <material name="gray_dark"/>
         </visual>
         <collision>
             <geometry>
                 <mesh filename="package://pastabot_pkg/mesh/GoFa_Link6.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="-0.899 0.0 -0.47" rpy="0.0 -1.570795 3.14159"/>
-            <material name="gray_dark"/>
+            <material name="green" />
         </collision>
-        
-
     </link>
+    <gazebo reference="link06_rev6">
+        <material>Gazebo/Yellow</material>
+    </gazebo>
 
+    <!-- LINK06 DH - Modeling Cinematic Transformations -->
     <link name="link06_DH">
         <inertial>
             <mass value="1"/>
-            <!--inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/-->
-            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
     </link>
-    
+
+    <!-- GRIPPER LINK -->
     <link name="gripper_fixed">
         <visual>
             <geometry>
-            
-
                 <mesh filename="package://pastabot_pkg/mesh/SR24_02_ExeAHTool.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="0 0.0 -0.150" rpy="0.0 0 0"/>
-            <material name="orange"/>
+            <material name="orange" />
         </visual>
         <collision>
             <geometry>
@@ -201,18 +209,22 @@
         </collision>
         <inertial>
             <mass value="1"/>
-            <!--inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/-->
-            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
         </inertial>
     </link>
+    <gazebo reference="gripper_fixed">
+        <material>Gazebo/Yellow</material>
+    </gazebo>
 
 
-   
+    <!-- Joints Definition -->
+    <!-- BASE JOINT (fixed) -->
     <joint name="fixed" type="fixed">
         <parent link="world" />
         <child link="base_link" />
     </joint>
 
+    <!-- JOINT1 Revolutional -->
     <joint name="jnt1_rev" type="revolute">
         <parent link="base_link"/>
         <child link="link01_rev1"/>
@@ -221,12 +233,14 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
+    <!-- JOINT1 DH -->
     <joint name="jnt1_DH" type="fixed">
         <parent link="link01_rev1"/>
         <child link="link01_DH"/>
         <origin xyz="0 0 0.265" rpy="-1.570795 0 0"/>
     </joint>
 
+    <!-- JOINT2 Revolutional -->
     <joint name="jnt2_rev" type="revolute">
         <parent link="link01_DH"/>
         <child link="link02_rev2"/>
@@ -234,7 +248,8 @@
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
-        
+
+    <!-- JOINT2 DH -->
     <joint name="jnt2_DH" type="fixed">
         <parent link="link02_rev2"/>
         <child link="link02_DH"/>
@@ -242,6 +257,7 @@
         <origin xyz="0 -0.444 0" rpy="0 0 -1.570795"/>
     </joint>
 
+    <!-- JOINT3 Revolutional -->
     <joint name="jnt3_rev" type="revolute">
         <parent link="link02_DH"/>
         <child link="link03_rev3"/>
@@ -249,7 +265,8 @@
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
-        
+
+    <!-- JOINT3 DH -->
     <joint name="jnt3_DH" type="fixed">
         <parent link="link03_rev3"/>
         <child link="link03_DH"/>
@@ -257,7 +274,7 @@
         <origin xyz="0.11 0 0" rpy="-1.570795 0 0"/>
     </joint>
 
-
+    <!-- JOINT4 Revolutional -->
     <joint name="jnt4_rev" type="revolute">
         <parent link="link03_DH"/>
         <child link="link04_rev4"/>
@@ -265,7 +282,8 @@
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
-        
+
+    <!-- JOINT4 DH -->
     <joint name="jnt4_DH" type="fixed">
         <parent link="link04_rev4"/>
         <child link="link04_DH"/>
@@ -273,7 +291,7 @@
         <origin xyz="0 0 0.47" rpy="1.570795 0 0"/>
     </joint>
 
-
+    <!-- JOINT5 Revolutional -->
     <joint name="jnt5_rev" type="revolute">
         <parent link="link04_DH"/>
         <child link="link05_rev5"/>
@@ -281,7 +299,8 @@
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
-        
+
+    <!-- JOINT5 DH -->
     <joint name="jnt5_DH" type="fixed">
         <parent link="link05_rev5"/>
         <child link="link05_DH"/>
@@ -289,7 +308,7 @@
         <origin xyz="0.08 0 0" rpy="-1.570795 0 0"/>
     </joint>
 
-
+    <!-- JOINT6 Revolutional -->
     <joint name="jnt6_rev" type="revolute">
         <parent link="link05_DH"/>
         <child link="link06_rev6"/>
@@ -297,14 +316,16 @@
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
-        
+
+    <!-- JOINT6 DH -->
     <joint name="jnt6_DH" type="fixed">
         <parent link="link06_rev6"/>
         <child link="link06_DH"/>
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0.101" rpy="0 0 3.14159"/>
     </joint>
-    
+
+    <!-- JOINT GRIPPER DH -->
     <joint name="jnt_gripper" type="fixed">
         <parent link="link06_DH"/>
         <child link="gripper_fixed"/>
@@ -312,14 +333,9 @@
         <origin xyz="0 0 0.150" rpy="0 0 0"/>
     </joint>
 
-   
-    <material name="orange">
-        <color rgba="0.43137254901960786 0.796078431372549 0.23529411764705882 1.0" />
-    </material>
 
-
-
-
+    <!-- Transmissions Definition -->
+    <!-- JOINT1 -->
     <transmission name="jnt1_rev_simple_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt1_rev">
@@ -331,7 +347,7 @@
         </actuator>
     </transmission>
 
-
+    <!-- JOINT2 -->
     <transmission name="jnt2_rev_simple_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt2_rev">
@@ -343,7 +359,7 @@
         </actuator>
     </transmission>
 
-
+    <!-- JOINT3 -->
     <transmission name="jnt3_rev_simple_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt3_rev">
@@ -355,6 +371,7 @@
         </actuator>
     </transmission>
 
+    <!-- JOINT4 -->
     <transmission name="jnt4_rev_simple_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt4_rev">
@@ -366,6 +383,7 @@
         </actuator>
     </transmission>
 
+    <!-- JOINT5 -->
     <transmission name="jnt5_rev_simple_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt5_rev">
@@ -377,6 +395,7 @@
         </actuator>
     </transmission>
 
+    <!-- JOINT6 -->
     <transmission name="jnt6_rev_simple_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt6_rev">
@@ -388,16 +407,12 @@
         </actuator>
     </transmission>
 
+
+    <!-- Gazebo Control -->
     <gazebo>
         <plugin name="control" filename="libgazebo_ros_control.so">
-            <robotNamespace>/</robotNamespace>  
+            <robotNamespace>/</robotNamespace>
         </plugin>
     </gazebo >
 
 </robot>
-
-
-
-
-
-
