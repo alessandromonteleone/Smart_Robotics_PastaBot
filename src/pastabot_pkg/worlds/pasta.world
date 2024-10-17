@@ -89,7 +89,7 @@
     <include>
       <name>table2</name>
       <uri>model://Table</uri>
-      <pose>-0.75 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
+      <pose>-0.80 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
     </include>
 
 
@@ -169,32 +169,27 @@
     </model>
 
 
-
-
-
-
-
     <include>
       <name>one_disposal_bin</name>
       <uri>model://disposal_bin</uri>
-      <pose>0 0.7 0 0 0 0</pose>
+      <pose>0 0.9 0 0 0 0</pose>
     </include>
 
     <include>
       <name>two_disposal_bin</name>
       <uri>model://disposal_bin</uri>
-      <pose>1 0 0 0 0 0</pose>
+      <pose>1.75 0 0 0 0 0</pose>
     </include>
 
     <include>
       <name>three_disposal_bin</name>
       <uri>model://disposal_bin</uri>
-      <pose>0 -0.7 0 0 0 0</pose>
+      <pose>0 -0.9 0 0 0 0</pose>
     </include>
 
     <model name='camera'>
       <static>1</static>
-      <pose>0.75 0 2.5 0 +1.5708 0</pose>
+      <pose>0.75 0 2.35 0 +1.5708 0</pose>
       <link name='camera_link'>
         <inertial>
           <mass>0.1</mass>
