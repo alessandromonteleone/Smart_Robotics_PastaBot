@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
-import rospy
-import cv2 as cv
-import numpy as np
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
 
-
+import os
 import cv2 as cv
 import numpy as np
 import rospy
@@ -26,7 +21,9 @@ class ObjectDetection:
         self.counter_position = 0
         self.push_point = None
         self.pixel_tollerence = 3
-    
+        #self.homography_matrix = np.load('/home/alessandro/Desktop/Smart_Robotics_PastaBot/src/pastabot_pkg/homography_matrix.npy')
+        self.homography_matrix = np.load(os.getcwd()+'/homography_matrix.npy')
+        print('pera ', os.getcwd())
     def camera_callback(self, data):
         try:
             cv_image = self.bridge_object.imgmsg_to_cv2(data, desired_encoding="bgr8")
@@ -129,8 +126,30 @@ class ObjectDetection:
             
             if self.counter_position >= self.threshold_wait:
                 self.start_end_points['end'] = self.push_point
-                distance = self.start_end_points['end'][1] - self.start_end_points['start'][1]
-                print("DISTANCE: ", abs(distance))
+                distance_x = self.start_end_points['end'][1] - self.start_end_points['start'][1]
+                #print("DISTANCE: ", abs(distance_x))
+                #distance_y = self.start_end_points['end'][0] - self.start_end_points['start'][0]
+
+                start_point_transformed = cv.perspectiveTransform(
+                np.array(self.start_end_points['start']).reshape(1,1,2), self.homography_matrix).reshape(2)
+
+                end_point_transformed = cv.perspectiveTransform(
+                np.array(self.start_end_points['end']).reshape(1,1,2), self.homography_matrix).reshape(2)
+
+                real_distance = end_point_transformed - start_point_transformed
+
+                
+                '''real_distance = cv.perspectiveTransform(
+                    distance.reshape(1,1,2),self.homography_matrix).reshape(2)'''
+                
+                print(f"Real distance: {real_distance}")
+                print(f"Distanza in norma: {np.linalg.norm(real_distance)}")
+                print(f"Matrice {self.homography_matrix}")
+
+                warped = cv.warpPerspective(cropped_img,self.homography_matrix,
+                                             dsize=(cropped_img.shape[1],cropped_img.shape[0]))
+                
+                cv.imshow("distrutta image", warped)
             
 
             cv.circle(mask_black, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)

@@ -83,6 +83,7 @@
     <include>
       <name>table1</name>
       <uri>model://Table</uri>
+      
       <pose>0.750000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
     </include>
 
