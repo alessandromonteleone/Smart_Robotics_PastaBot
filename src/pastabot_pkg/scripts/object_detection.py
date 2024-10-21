@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
-import rospy
-import cv2 as cv
-import numpy as np
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
 
+import os
 import cv2 as cv
 import numpy as np
 import rospy
@@ -20,7 +16,14 @@ class ObjectDetection:
     def __init__(self):
         self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.camera_callback)
         self.bridge_object = CvBridge()
-    
+        self.start_end_points = {'start':None, 'end':None}
+        self.threshold_wait = 15
+        self.counter_position = 0
+        self.push_point = None
+        self.pixel_tollerence = 3
+        #self.homography_matrix = np.load('/home/alessandro/Desktop/Smart_Robotics_PastaBot/src/pastabot_pkg/homography_matrix.npy')
+        self.homography_matrix = np.load(os.getcwd()+'/homography_matrix.npy')
+        print('pera ', os.getcwd())
     def camera_callback(self, data):
         try:
             cv_image = self.bridge_object.imgmsg_to_cv2(data, desired_encoding="bgr8")
@@ -28,8 +31,10 @@ class ObjectDetection:
             print(e)
         
         # Crop the image
-        cropped_img = cv_image[138:, 220:580]
-        logger.debug(f"cropped_img.shape: {cropped_img.shape}")
+        #(192;10) (607;10) (192;789) (607;789) 
+
+        cropped_img = cv_image[10:789+1, 192:607+1]
+        #logger.debug(f"cropped_img.shape: {cropped_img.shape}")
 
         """
         # Convert the image to grayscale
@@ -90,26 +95,70 @@ class ObjectDetection:
         objects_detected = []
         for cnt in contours:
             area = cv.contourArea(cnt)
-            if area > 500:
+            if area > 20:
                 cnt = cv.approxPolyDP(cnt, 0.03 * cv.arcLength(cnt, True), True)
                 if cnt.shape[0] == 4:
                     objects_detected.append(cnt)
-                    print("cnt:", cnt)
+                    #print("cnt:", cnt)
 
         print("#"*10 + " Detected ", len(objects_detected), "objects")
 
         if len(objects_detected):
-            bottom_side = objects_detected[0].squeeze(-2)[2:4, :]
-            push_point = (bottom_side.sum(-2) / 2).tolist()
-            logger.debug("push_point (x, y)" + str(push_point))
+            points = objects_detected[0].squeeze(-2)
+            idx = np.argsort(points[:,-1])[2:4]
+            bottom_side = points[idx, :]
+            # print('point', points.shape)
+            # print('idx', idx.shape)
+            # print('bottom', bottom_side.shape)
+            
+            if self.push_point is not None:
+                prev_push_point = self.push_point
+            
+            self.push_point = (bottom_side.sum(-2) / 2).tolist()
+            print("self.push_point (x, y)" + str(self.push_point))
 
-            cv.circle(mask_black, (int(push_point[0]), int(push_point[1])), 1, (0, 255, 0), thickness=-1)
-            cv.circle(cropped_img, (int(push_point[0]), int(push_point[1])), 1, (0, 255, 0), thickness=-1)
+            if self.start_end_points['start'] is None:
+                self.start_end_points['start'] = self.push_point
+            elif (abs(prev_push_point[1]-self.push_point[1]) < self.pixel_tollerence 
+                  and abs(self.start_end_points['start'][1]-self.push_point[1])> 5):
+                self.counter_position+=1
+                print("counter:", self.counter_position)
+            
+            if self.counter_position >= self.threshold_wait:
+                self.start_end_points['end'] = self.push_point
+                distance_x = self.start_end_points['end'][1] - self.start_end_points['start'][1]
+                #print("DISTANCE: ", abs(distance_x))
+                #distance_y = self.start_end_points['end'][0] - self.start_end_points['start'][0]
+
+                start_point_transformed = cv.perspectiveTransform(
+                np.array(self.start_end_points['start']).reshape(1,1,2), self.homography_matrix).reshape(2)
+
+                end_point_transformed = cv.perspectiveTransform(
+                np.array(self.start_end_points['end']).reshape(1,1,2), self.homography_matrix).reshape(2)
+
+                real_distance = end_point_transformed - start_point_transformed
+
+                
+                '''real_distance = cv.perspectiveTransform(
+                    distance.reshape(1,1,2),self.homography_matrix).reshape(2)'''
+                
+                print(f"Real distance: {real_distance}")
+                print(f"Distanza in norma: {np.linalg.norm(real_distance)}")
+                print(f"Matrice {self.homography_matrix}")
+
+                warped = cv.warpPerspective(cropped_img,self.homography_matrix,
+                                             dsize=(cropped_img.shape[1],cropped_img.shape[0]))
+                
+                cv.imshow("distrutta image", warped)
+            
+
+            cv.circle(mask_black, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
+            cv.circle(cropped_img, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
         
         # --- Show only the masked parts of the image ---
         cv.imshow("Box frontal face", mask_black)
         cv.imshow("cropped", cropped_img)
-        
+
         cv.waitKey(1)
 
 if __name__ == '__main__':

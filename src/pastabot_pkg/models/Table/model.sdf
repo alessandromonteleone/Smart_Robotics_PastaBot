@@ -31,7 +31,7 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Grey</name>
           </script>
-           PBR for Ignition, material scripts for gazebo classic
+           <!-- PBR for Ignition, material scripts for gazebo classic -->
           <pbr>
             <metal>
               <albedo_map>model://Table/Table_Diffuse.jpg</albedo_map>
