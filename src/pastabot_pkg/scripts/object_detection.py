@@ -6,24 +6,70 @@ import numpy as np
 import rospy
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-
+from std_msgs.msg import Float32
+from geometry_msgs.msg import Point
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
+def draw_line_with_points(image, start_point, end_point, distance):
+    
+    # Disegna i cerchi per i punti di inizio e fine
+    cv.circle(image, (int(start_point[0]), int(start_point[1])), 5, (0, 0, 255), thickness=-1)
+    cv.circle(image, (int(end_point[0]), int(end_point[1])), 5, (0, 255, 0), thickness=-1)
+
+    cv.line(image, 
+             (int(start_point[0]), int(start_point[1])), 
+             (int(end_point[0]), int(end_point[1])), 
+             (255, 255, 255),
+             thickness=2)  
+
+    mid_x = int((start_point[0] + end_point[0]) / 2)
+    mid_y = int((start_point[1] + end_point[1]) / 2)
+    
+    cv.putText(image, 
+               'start_point', 
+               (int(start_point[0])+10, int(start_point[1])),
+               cv.FONT_HERSHEY_SIMPLEX, 
+               0.7,  
+               (0, 0, 255),  
+               1)
+
+    cv.putText(image, 
+            'end_point', 
+            (int(end_point[0])+10, int(end_point[1])),
+            cv.FONT_HERSHEY_SIMPLEX, 
+            0.7,  # Dimensione del font
+            (0, 255, 0),  
+            1)  # Spessore del font
+
+    cv.putText(image, 
+               distance, 
+               (mid_x-80, mid_y), 
+               cv.FONT_HERSHEY_SIMPLEX, 
+               0.7,
+               (255, 255, 255), 
+               1)
+
+
+#All the coords are in the format: (x,y) w.r.t their reference frame
+#Note that world reference frame is rotated by 90 degres w.r.t camera frame
 class ObjectDetection:
     def __init__(self):
         self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.camera_callback)
         self.bridge_object = CvBridge()
+
+        self.push_point_pub = rospy.Publisher("box/push_point", Point, queue_size=10)
+        self.distance_pub = rospy.Publisher("box/push_distance", Float32, queue_size=10)
+
         self.start_end_points = {'start':None, 'end':None}
         self.threshold_wait = 15
         self.counter_position = 0
         self.push_point = None
         self.pixel_tollerence = 3
-        #self.homography_matrix = np.load('/home/alessandro/Desktop/Smart_Robotics_PastaBot/src/pastabot_pkg/homography_matrix.npy')
-        self.homography_matrix = np.load(os.getcwd()+'/homography_matrix.npy')
-        print('pera ', os.getcwd())
+        self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy')
+        
     def camera_callback(self, data):
         try:
             cv_image = self.bridge_object.imgmsg_to_cv2(data, desired_encoding="bgr8")
@@ -35,6 +81,7 @@ class ObjectDetection:
 
         cropped_img = cv_image[10:789+1, 192:607+1]
         #logger.debug(f"cropped_img.shape: {cropped_img.shape}")
+        
 
         """
         # Convert the image to grayscale
@@ -82,9 +129,6 @@ class ObjectDetection:
         mask_black = ((cropped_img <= threshold_black) * 255).astype(np.uint8)
         mask_black = cv.cvtColor(mask_black, cv.COLOR_BGR2GRAY)
         
-        # Apply the mask to the image (keeping only the colored pixels)
-        #face = np.ones_like(cropped_img) * 255
-        #face[mask_black] = cropped_img[mask_black]
         contours, _ = cv.findContours(mask_black, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
         mask_black = cv.cvtColor(mask_black, cv.COLOR_GRAY2BGR)
@@ -107,9 +151,6 @@ class ObjectDetection:
             points = objects_detected[0].squeeze(-2)
             idx = np.argsort(points[:,-1])[2:4]
             bottom_side = points[idx, :]
-            # print('point', points.shape)
-            # print('idx', idx.shape)
-            # print('bottom', bottom_side.shape)
             
             if self.push_point is not None:
                 prev_push_point = self.push_point
@@ -117,8 +158,9 @@ class ObjectDetection:
             self.push_point = (bottom_side.sum(-2) / 2).tolist()
             print("self.push_point (x, y)" + str(self.push_point))
 
-            if self.start_end_points['start'] is None:
+            if self.start_end_points['start'] is None  :
                 self.start_end_points['start'] = self.push_point
+
             elif (abs(prev_push_point[1]-self.push_point[1]) < self.pixel_tollerence 
                   and abs(self.start_end_points['start'][1]-self.push_point[1])> 5):
                 self.counter_position+=1
@@ -126,10 +168,10 @@ class ObjectDetection:
             
             if self.counter_position >= self.threshold_wait:
                 self.start_end_points['end'] = self.push_point
-                distance_x = self.start_end_points['end'][1] - self.start_end_points['start'][1]
-                #print("DISTANCE: ", abs(distance_x))
-                #distance_y = self.start_end_points['end'][0] - self.start_end_points['start'][0]
-
+                #distance along camera y, real x
+                distance = self.start_end_points['end'][1] - self.start_end_points['start'][1]
+                
+                
                 start_point_transformed = cv.perspectiveTransform(
                 np.array(self.start_end_points['start']).reshape(1,1,2), self.homography_matrix).reshape(2)
 
@@ -137,26 +179,36 @@ class ObjectDetection:
                 np.array(self.start_end_points['end']).reshape(1,1,2), self.homography_matrix).reshape(2)
 
                 real_distance = end_point_transformed - start_point_transformed
+                distance_norm = np.linalg.norm(real_distance)
+                
+                if self.push_point:
+                    point_msg = Point()
+                    point_msg.x = self.push_point[0]
+                    point_msg.y = self.push_point[1]
+                    point_msg.z = 0.0
+                
+                # Pubblica la posizione
+                self.push_point_pub.publish(point_msg)
+                
+                if self.counter_position == self.threshold_wait:
+                    # Pubblica la distanza
+                    self.distance_pub.publish(distance_norm)
 
-                
-                '''real_distance = cv.perspectiveTransform(
-                    distance.reshape(1,1,2),self.homography_matrix).reshape(2)'''
-                
+                print("Pixel distance: ", abs(distance))
                 print(f"Real distance: {real_distance}")
-                print(f"Distanza in norma: {np.linalg.norm(real_distance)}")
+                print(f"Distanza in norma:{distance_norm} ")
                 print(f"Matrice {self.homography_matrix}")
 
-                warped = cv.warpPerspective(cropped_img,self.homography_matrix,
-                                             dsize=(cropped_img.shape[1],cropped_img.shape[0]))
-                
-                cv.imshow("distrutta image", warped)
-            
+                draw_line_with_points(cropped_img, 
+                              self.start_end_points['start'], 
+                              self.start_end_points['end'],
+                              f"{distance_norm:.2f}m")
 
             cv.circle(mask_black, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
             cv.circle(cropped_img, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
         
         # --- Show only the masked parts of the image ---
-        cv.imshow("Box frontal face", mask_black)
+        #cv.imshow("Box frontal face", mask_black)
         cv.imshow("cropped", cropped_img)
 
         cv.waitKey(1)

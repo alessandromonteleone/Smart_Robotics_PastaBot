@@ -14,7 +14,6 @@ world_points = np.array([
     (LONG_SIDE, SHORT_SIDE/2)      # C
     ])
 
-
 img_points = np.array([
     (0,long_size_px),
     (short_size_px,long_size_px),

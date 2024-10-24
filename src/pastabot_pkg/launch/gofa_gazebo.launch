@@ -45,6 +45,6 @@
     <node name="image_saver" pkg="pastabot_pkg" type="image_saver.py" output="screen"/>-->
 
     <!-- Image Saver Node -->
-    <node name="object_detection" cwd="node" pkg="pastabot_pkg" type="object_detection.py" output="screen"/>
+    <!--<node name="object_detection" cwd="node" pkg="pastabot_pkg" type="object_detection.py" output="screen"/>-->
 
 </launch>

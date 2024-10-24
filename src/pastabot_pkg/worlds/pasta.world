@@ -115,7 +115,7 @@
             <iyz>0.000000</iyz>
             <izz>0.100000</izz>
           </inertia>
-          <mass>1.000000</mass>          
+          <mass>1.000000</mass>
         </inertial>
         <collision name="box_01_geom">
           <pose>0.000000 0.000000 0.0 0.000000 -0.000000 0.000000</pose>
