@@ -1,12 +1,19 @@
 <?xml version="1.0"?>
+
 <launch>
 
     <!-- GAZEBO Options -->
-    <arg name="gazebo_gui" value="true" doc="Start Gazebo GUI"/>                                                    <!-- Gazebo GUI -->
-    <arg name="paused" value="false" doc="Start Gazebo paused"/>                                                    <!-- Starting Gazebo paused -->
-    <arg name="world_name" value="worlds/empty.world" doc="Gazebo world file"/>                                     <!-- World name -->
-    <arg name="world_pose" value="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>                 <!-- World Pose -->
-    <arg name="initial_joint_positions" value=" -J jnt1_rev 0 -J jnt2_rev 0 -J jnt3_rev 0 -J jnt4_rev 0 -J jnt5_rev 1.5708 -J jnt6_rev 0" 
+    <arg name="gazebo_gui" default="true" doc="Start Gazebo GUI"/>                                                    <!-- Gazebo GUI -->
+    <arg name="paused" default="false" doc="Start Gazebo paused"/>                                                    <!-- Gazebo Simulation paused -->
+    <arg name="world_name" default="$(find pastabot_pkg)/worlds/pasta.world" doc="Gazebo world file"/>                <!-- World name -->
+    <arg name="world_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>                 <!-- World Pose -->
+    <arg name="arg_x" default="-0.50" />                                                                              <!-- X coordinate for Base Link -->
+    <arg name="arg_y" default="0.00" />                                                                               <!-- Y coordinate for Base Link -->
+    <arg name="arg_z" default="1" />                                                                                  <!-- Z coordinate for Base Link -->
+    <arg name="arg_Roll" default="0.00" />                                                                            <!-- Roll for Base Link -->
+    <arg name="arg_Pitch" default="0.00" />                                                                           <!-- Pitch for Base Link -->
+    <arg name="arg_Yaw" default="0.00" />                                                                             <!-- Yaw coordinate for Base Link -->
+    <arg name="initial_joint_positions" default=" -J jnt1_rev 0 -J jnt2_rev 0 -J jnt3_rev 0 -J jnt4_rev 0 -J jnt5_rev 1.5708 -J jnt6_rev 0" 
         doc="Initial joint configuration of the robot"/>                                                            <!-- Initial Joint Positions -->
 
     <!-- MOVEIT Options -->
@@ -18,7 +25,6 @@
     <arg name="debug" value="false"/>                                                                               <!-- Debug Mode-->
     <arg name="fake_execution_type" value="interpolate"/>                                                           <!-- Set execution mode for fake execution controllers -->
     
-
     <!-- RVIZ Options -->
     <arg name="use_gui" value="false"/>                                                                             <!-- Hide joint_state_publisher's GUI in 'fake' controller_manager mode -->                                         
     <arg name="use_rviz" value="false"/>                                                                            <!-- Rviz -->
@@ -28,17 +34,28 @@
     <!-- GAZEBO: starting PAUSED to allow the controllers to pickup the initial pose -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch" pass_all_args="true">
         <arg name="paused" value="true"/>
-    </include>
+    </include>  
 
-    <!-- GOFA: setting robot URDF -->
+    <!-- GOFA: setting robot URDF in parameters server -->
     <param name="robot_description" textfile="$(find pastabot_pkg)/urdf/gofa_arm_urdf_toolfixed.urdf"/>
-
+    
     <!-- GAZEBO: unpausing simulation after loading the robot model -->
     <arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')"/>
 
     <!-- GOFA: spawning in Gazebo -->
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
-        args="-urdf -param robot_description -model gofa_arm_urdf $(arg unpause) $(arg world_pose) $(arg initial_joint_positions)"
+        args="-urdf 
+            -param robot_description
+            -model gofa_arm_urdf 
+            $(arg unpause) 
+            $(arg world_pose) 
+            -x $(arg arg_x) 
+            -y $(arg arg_y) 
+            -z $(arg arg_z) 
+            -R $(arg arg_Roll)
+            -P $(arg arg_Pitch)
+            -Y $(arg arg_Yaw)
+            $(arg initial_joint_positions)"
         respawn="false" output="screen"/>
 
     <!-- CONTROLLER: Gazebo ROS controllers -->
