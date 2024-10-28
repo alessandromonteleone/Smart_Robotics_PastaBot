@@ -1,0 +1,13 @@
+controller_list:
+  - name: fake_gofa_group_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - jnt1_rev
+      - jnt2_rev
+      - jnt3_rev
+      - jnt4_rev
+      - jnt5_rev
+      - jnt6_rev
+initial:  # Define initial robot poses per group
+  - group: gofa_group
+    pose: home

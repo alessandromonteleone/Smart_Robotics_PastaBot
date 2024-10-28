@@ -1,0 +1,63 @@
+position:
+  type: position_controllers/JointTrajectoryController
+  joints:
+    - jnt1_rev
+    - jnt2_rev
+    - jnt3_rev
+    - jnt4_rev
+    - jnt5_rev
+    - jnt6_rev
+  gains:
+    jnt1_rev:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    jnt2_rev:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    jnt3_rev:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    jnt4_rev:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    jnt5_rev:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    jnt6_rev:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    contraints:
+      goal_time: 0.6
+      stopped_velocity_tolerances: 0.05
+      jnt1_rev: {trajectory: 0.1, goal: 0.1}
+      jnt2_rev: {trajectory: 0.1, goal: 0.1}
+      jnt3_rev: {trajectory: 0.1, goal: 0.1}
+      jnt4_rev: {trajectory: 0.1, goal: 0.1}
+      jnt5_rev: {trajectory: 0.1, goal: 0.1}
+      jnt6_rev: {trajectory: 0.1, goal: 0.1}
+    stop_trajectory_duration: 0.5
+    state_publish_rate: 25
+    action_monitor_rate: 10
+effort:
+  type: effort_controllers/JointTrajectoryController
+  joints:
+    - jnt1_rev
+    - jnt2_rev
+    - jnt3_rev
+    - jnt4_rev
+    - jnt5_rev
+    - jnt6_rev
+  gains:
+    {}

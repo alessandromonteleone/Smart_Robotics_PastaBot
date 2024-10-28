@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- GAZEBO Options -->
+    <arg name="gazebo_gui" value="true" doc="Start Gazebo GUI"/>                                                    <!-- Gazebo GUI -->
+    <arg name="paused" value="false" doc="Start Gazebo paused"/>                                                    <!-- Starting Gazebo paused -->
+    <arg name="world_name" value="worlds/empty.world" doc="Gazebo world file"/>                                     <!-- World name -->
+    <arg name="world_pose" value="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>                 <!-- World Pose -->
+    <arg name="initial_joint_positions" value=" -J jnt1_rev 0 -J jnt2_rev 0 -J jnt3_rev 0 -J jnt4_rev 0 -J jnt5_rev 1.5708 -J jnt6_rev 0" 
+        doc="Initial joint configuration of the robot"/>                                                            <!-- Initial Joint Positions -->
+
+    <!-- MOVEIT Options -->
+    <arg name="pipeline" value="ompl" doc="Planning pipeline to use with MoveIt"/>                                  <!-- Planning pipeline -->
+    <arg name="load_robot_description" value="false"/>                                                              <!-- Override robot_description -->
+    <arg name="moveit_controller_manager" value="ros_control"/>                                                     <!-- Controller manager: fake, simple, or ros_control -->
+    <arg name="db" value="false"/>                                                                                  <!-- Database -->
+    <arg name="db_path" value="$(find pastabot_pkg_moveit)/default_warehouse_mongo_db"/>                                          <!-- Database Location -->
+    <arg name="debug" value="false"/>                                                                               <!-- Debug Mode-->
+    <arg name="fake_execution_type" value="interpolate"/>                                                           <!-- Set execution mode for fake execution controllers -->
+    
+
+    <!-- RVIZ Options -->
+    <arg name="use_gui" value="false"/>                                                                             <!-- Hide joint_state_publisher's GUI in 'fake' controller_manager mode -->                                         
+    <arg name="use_rviz" value="false"/>                                                                            <!-- Rviz -->
+
+
+    <!-- GAZEBO -->
+    <!-- GAZEBO: starting PAUSED to allow the controllers to pickup the initial pose -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch" pass_all_args="true">
+        <arg name="paused" value="true"/>
+    </include>
+
+    <!-- GOFA: setting robot URDF -->
+    <param name="robot_description" textfile="$(find pastabot_pkg)/urdf/gofa_arm_urdf_toolfixed.urdf"/>
+
+    <!-- GAZEBO: unpausing simulation after loading the robot model -->
+    <arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')"/>
+
+    <!-- GOFA: spawning in Gazebo -->
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+        args="-urdf -param robot_description -model gofa_arm_urdf $(arg unpause) $(arg world_pose) $(arg initial_joint_positions)"
+        respawn="false" output="screen"/>
+
+    <!-- CONTROLLER: Gazebo ROS controllers -->
+    <rosparam file="$(find pastabot_pkg_moveit)/config/gazebo_controllers.yaml"/>
+    <include file="$(find pastabot_pkg_moveit)/launch/ros_controllers.launch"/>
+    <node name="gazebo_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller"/>
+
+    <!-- PUBLISHER: given the published joint states, publish TF for the robot links -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen"/>
+
+
+    <!-- MOVEIT -->
+    <!-- MOVEIT: running the executable without trajectory execution -->
+    <include file="$(find pastabot_pkg_moveit)/launch/move_group.launch">
+        <arg name="allow_trajectory_execution" value="true"/>
+        <arg name="moveit_controller_manager" value="$(arg moveit_controller_manager)"/>
+        <arg name="fake_execution_type" value="$(arg fake_execution_type)"/>
+        <arg name="info" value="true"/>
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="pipeline" value="$(arg pipeline)"/>
+        <arg name="load_robot_description" value="$(arg load_robot_description)"/>
+    </include>
+
+
+    <!-- RVIZ -->
+    <!-- RVIZ: running Rviz and loading the default config to see the state of the move_group node -->
+    <include file="$(find pastabot_pkg_moveit)/launch/moveit_rviz.launch" if="$(arg use_rviz)">
+        <arg name="rviz_config" value="$(find pastabot_pkg_moveit)/launch/moveit.rviz"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+
+    <!-- DATABASE -->
+    <!-- If database loading was enabled, start mongodb as well -->
+    <include file="$(find pastabot_pkg_moveit)/launch/default_warehouse_db.launch" if="$(arg db)">
+        <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
+    </include>
+
+
+    <!-- SCRIPTS -->
+    <!-- Execute the Python script to control the robot -->
+    <node name="move_gofa_robot" pkg="pastabot_pkg" type="continuous_move.py" args="-d $(find pastabot_pkg)/scripts/continuous_move.py" output="screen"/> -->
+</launch>

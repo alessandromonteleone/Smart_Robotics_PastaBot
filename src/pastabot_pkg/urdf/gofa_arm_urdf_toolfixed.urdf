@@ -23,10 +23,14 @@
         <inertial>
             <mass value="10"/>
             <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
         </inertial>
     </link>
     <gazebo reference="base_link">
         <material>Gazebo/DarkGrey</material>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+        </plugin>
     </gazebo>
 
     <!-- LINK01 Revolutional - Visualization and Physics -->
@@ -43,6 +47,11 @@
             </geometry>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
         </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0"/>
+        </inertial>
     </link>
     <gazebo reference="link01_rev1">
         <material>Gazebo/DarkGrey</material>
@@ -70,6 +79,11 @@
             </geometry>
             <origin xyz="0.0 0.265 0.0" rpy="1.570795 0.0 0.0"/>
         </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0"/>
+        </inertial>
     </link>
     <gazebo reference="link02_rev2">
         <material>Gazebo/DarkGrey</material>
@@ -97,6 +111,11 @@
             </geometry>
             <origin xyz="-0.709 0.0 0.0 " rpy="1.570795 0.0 1.570795"/>
         </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0"/>
+        </inertial>
     </link>
     <gazebo reference="link03_rev3">
         <material>Gazebo/Yellow</material>
@@ -124,6 +143,11 @@
             </geometry>
             <origin xyz="-0.819 0.0 0.0" rpy="3.14159 -1.570795 0.0"/>
         </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0"/>
+        </inertial>
     </link>
     <gazebo reference="link04_rev4">
         <material>Gazebo/Yellow</material>
@@ -151,6 +175,11 @@
             </geometry>
             <origin xyz="-0.819 -0.47 0.0" rpy="1.570795 0.0 1.570795"/>
         </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0"/>
+        </inertial>
     </link>
     <gazebo reference="link05_rev5">
         <material>Gazebo/Yellow</material>
@@ -177,8 +206,13 @@
                 <mesh filename="package://pastabot_pkg/mesh/GoFa_Link6.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="-0.899 0.0 -0.47" rpy="0.0 -1.570795 3.14159"/>
-            <material name="green" />
+            <material name="green"/>
         </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0"/>
+        </inertial>
     </link>
     <gazebo reference="link06_rev6">
         <material>Gazebo/Yellow</material>
@@ -199,7 +233,6 @@
                 <mesh filename="package://pastabot_pkg/mesh/SR24_02_ExeAHTool.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <origin xyz="0 0.0 -0.150" rpy="0.0 0 0"/>
-            <material name="orange" />
         </visual>
         <collision>
             <geometry>
@@ -210,6 +243,7 @@
         <inertial>
             <mass value="1"/>
             <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
         </inertial>
     </link>
     <gazebo reference="gripper_fixed">
@@ -220,8 +254,8 @@
     <!-- Joints Definition -->
     <!-- BASE JOINT (fixed) -->
     <joint name="fixed" type="fixed">
-        <parent link="world" />
-        <child link="base_link" />
+        <parent link="world"/>
+        <child link="base_link"/>
     </joint>
 
     <!-- JOINT1 Revolutional -->
@@ -340,10 +374,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt1_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="jnt1_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </actuator>
     </transmission>
 
@@ -352,10 +388,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt2_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="jnt2_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </actuator>
     </transmission>
 
@@ -364,10 +402,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt3_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="jnt3_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </actuator>
     </transmission>
 
@@ -376,10 +416,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt4_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="jnt4_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </actuator>
     </transmission>
 
@@ -388,10 +430,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt5_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="jnt5_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </actuator>
     </transmission>
 
@@ -400,10 +444,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt6_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="jnt6_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </actuator>
     </transmission>
 
@@ -413,6 +459,5 @@
         <plugin name="control" filename="libgazebo_ros_control.so">
             <robotNamespace>/</robotNamespace>
         </plugin>
-    </gazebo >
-
+    </gazebo>
 </robot>

@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: pastabot_pkg
+    relative_path: urdf/gofa_arm_urdf_toolfixed.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/gofa_arm_urdf.srdf
+  CONFIG:
+    author_name: Luca Inghilterra
+    author_email: 271539@studenti.unimore.it
+    generated_timestamp: 1730128462
