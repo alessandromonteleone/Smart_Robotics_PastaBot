@@ -70,9 +70,15 @@ class ObjectDetection:
         self.pixel_tollerence = 3
         self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy')
         
+        self.first = True
+
     def camera_callback(self, data):
         try:
             cv_image = self.bridge_object.imgmsg_to_cv2(data, desired_encoding="bgr8")
+            if self.first:
+                self.first = False
+                print("first frame")
+                return
         except CvBridgeError as e:
             print(e)
         
@@ -158,7 +164,8 @@ class ObjectDetection:
             self.push_point = (bottom_side.sum(-2) / 2).tolist()
             print("self.push_point (x, y)" + str(self.push_point))
 
-            if self.start_end_points['start'] is None  :
+            
+            if self.start_end_points['start'] is None:
                 self.start_end_points['start'] = self.push_point
 
             elif (abs(prev_push_point[1]-self.push_point[1]) < self.pixel_tollerence 

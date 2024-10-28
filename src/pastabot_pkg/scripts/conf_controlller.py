@@ -9,6 +9,7 @@ import math
 from object_detection import ObjectDetection
 import cv2 as cv
 from sensor_msgs.msg import Image
+from std_srvs.srv import Empty
 
 def set_model_mass(model_name, link_name, new_mass):
     rospy.wait_for_service('/gazebo/set_link_properties')
@@ -34,6 +35,10 @@ def set_model_mass(model_name, link_name, new_mass):
             iyz=link_properties.iyz * mass_ratio
         )
         print(f"Set mass to {new_mass} for {model_name} ({link_name})")
+
+        # Aggiungi un reset per aggiornare la fisica
+        reset_physics = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
+        reset_physics()
 
     except rospy.ServiceException as e:
         print(f"Error modifying link properties: {e}")
@@ -110,13 +115,13 @@ if __name__ == "__main__":
     input_data = {
         'model_name': 'box_01_model',
         'link_name': 'box_01_body',
-        'mass': 5.0,
+        'mass': 1,
         'position': [0.95, 0.0, 1.166],
         'roll': 0.0,
         'pitch': 0.0,
         'yaw': 0.0
     }
-    
+
     process_inputs(input_data)
 
     object_detection = ObjectDetection() 

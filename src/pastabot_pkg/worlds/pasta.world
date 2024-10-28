@@ -2,7 +2,7 @@
 <sdf version="1.5">
   <world name="default">
     <scene>
-      <ambient>0.7 0.7 0.7 1</ambient>
+      <ambient>0.4 0.4 0.4 1</ambient>
       <background>0.700000 0.700000 0.700000 1.000000</background>
       <shadows>1</shadows>
     </scene>
@@ -100,7 +100,7 @@
       <pose>0.75 0.000000 1.00000 0.000000 0.000000 1.5708 </pose>
     </include> -->
 
-    <model name="box_01_model">
+    <!--<model name="box_01_model">
       <allow_auto_disable>0</allow_auto_disable>
       <pose>0.95 0.000000 1.16600 0.000000 0.000000 0</pose>
       <link name="box_01_body">
@@ -108,14 +108,14 @@
         <inertial>
           <pose>0.000000 0.000000 -0.15000 0.000000 0.000000 0.000000</pose>          
           <inertia>
-            <ixx>0.100000</ixx>
-            <ixy>0.000000</ixy>
-            <ixz>0.000000</ixz>
-            <iyy>0.100000</iyy>
-            <iyz>0.000000</iyz>
-            <izz>0.100000</izz>
-          </inertia>
-          <mass>1.000000</mass>
+          <ixx>0.01083333</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.00833333</iyy>
+          <iyz>0</iyz>
+          <izz>0.00416667</izz>
+        </inertia>
+        <mass>1</mass>
         </inertial>
         <collision name="box_01_geom">
           <pose>0.000000 0.000000 0.0 0.000000 -0.000000 0.000000</pose>
@@ -157,7 +157,13 @@
           </geometry>
           <material>
             <ambient> 0.2 0.2 0.2 1.0 </ambient>
+            <name>my_material</name>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>1 1 1 1</specular>
+            <emissive>0 0 0 0</emissive>
+            <density>1000</density>
           </material>
+
           <cast_shadows>1</cast_shadows>
           <laser_retro>0.000000</laser_retro>
           <transparency>0.000000</transparency>
@@ -167,7 +173,110 @@
         <kinematic>0</kinematic>
       </link>
       <static>0</static>
-    </model>
+    </model> -->
+
+
+    <!-- <model name='box_01_model'>
+      <allow_auto_disable>0</allow_auto_disable>
+      <pose>0.95 0.000000 1.16600 0.000000 0.000000 0</pose>
+    <link name='box_01_body'>
+      <pose>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</pose>
+      <inertial>
+        <pose>0.000000 0.000000 -0.15000 0.000000 0.000000 0.000000</pose>
+        <inertia>
+          <ixx>0.108333</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0833333</iyy>
+          <iyz>0</iyz>
+          <izz>0.0416667</izz>
+        </inertia>
+        <mass>10</mass>
+      </inertial>
+      <gravity>1</gravity>
+      <self_collide>0</self_collide>
+      <kinematic>0</kinematic>
+      <enable_wind>0</enable_wind>
+      <visual name='box_01_geom_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.1 0.2 0.3</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <shader type='pixel'>
+            <normal_map>__default__</normal_map>
+          </shader>
+          <script>
+            <name>ModelPreview_1::box_01_body::box_01_geom_visual_MATERIAL_</name>
+            <uri>__default__</uri>
+          </script>
+        </material>
+        <cast_shadows>1</cast_shadows>
+        <laser_retro>0</laser_retro>
+        <transparency>0</transparency>
+      </visual>
+      <collision name='box_01_geom'>
+        <laser_retro>0</laser_retro>
+        <max_contacts>10</max_contacts>
+        <pose>0.000000 0.000000 0.0 0.000000 -0.000000 0.000000</pose>
+        <geometry>
+          <box>
+            <size>0.1 0.2 0.3</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.5</mu>
+              <mu2>0.5</mu2>
+              <fdir1>0 0 0</fdir1>
+              <slip1>0</slip1>
+              <slip2>0</slip2>
+            </ode>
+            <torsional>
+              <coefficient>1</coefficient>
+              <patch_radius>0</patch_radius>
+              <surface_radius>0</surface_radius>
+              <use_patch_radius>1</use_patch_radius>
+              <ode>
+                <slip>0</slip>
+              </ode>
+            </torsional>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+            <threshold>1e+06</threshold>
+          </bounce>
+          <contact>
+            <collide_without_contact>0</collide_without_contact>
+            <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+            <collide_bitmask>1</collide_bitmask>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>100000</kp>
+              <kd>1</kd>
+              <max_vel>100</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+            <bullet>
+              <split_impulse>1</split_impulse>
+              <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>100000</kp>
+              <kd>1</kd>
+            </bullet>
+          </contact>
+        </surface>
+      </collision>
+    </link>
+    <static>0</static>
+    <allow_auto_disable>0</allow_auto_disable>
+  </model> -->
 
 
     <include>
