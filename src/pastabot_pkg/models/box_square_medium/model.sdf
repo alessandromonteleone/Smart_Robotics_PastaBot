@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='box_one_kg'>
+  <model name='box_square_medium'>
     <link name='box_01_body'>
       <pose>0 0 0 0 -0 0</pose>
       <inertial>
@@ -35,6 +35,9 @@
             <name>ModelPreview_1::box_01_body::box_01_geom_visual_MATERIAL_</name>
             <uri>__default__</uri>
           </script>
+          <diffuse>0 0 0 1</diffuse>
+          <specular>0 0 0 1</specular>
+          <emissive>0 0 0 1</emissive>
         </material>
         <cast_shadows>1</cast_shadows>
         <laser_retro>0</laser_retro>
@@ -68,6 +71,10 @@
               </ode>
             </torsional>
           </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+            <threshold>1e+06</threshold>
+          </bounce>
           <contact>
             <collide_without_contact>0</collide_without_contact>
             <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
