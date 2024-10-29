@@ -57,20 +57,29 @@ def draw_line_with_points(image, start_point, end_point, distance):
 #Note that world reference frame is rotated by 90 degres w.r.t camera frame
 class ObjectDetection:
     def __init__(self):
-        self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.camera_callback)
-        self.bridge_object = CvBridge()
-
         self.push_point_pub = rospy.Publisher("box/push_point", Point, queue_size=10)
         self.distance_pub = rospy.Publisher("box/push_distance", Float32, queue_size=10)
-
-        self.start_end_points = {'start':None, 'end':None}
+        
         self.threshold_wait = 15
-        self.counter_position = 0
-        self.push_point = None
+        
         self.pixel_tollerence = 3
         self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy')
-        
+
+    def start(self):
         self.first = True
+        self.is_stopped = False
+        self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.camera_callback)
+        self.bridge_object = CvBridge()
+        self.start_end_points = {'start':None, 'end':None}
+        self.counter_position = 0
+        self.push_point = None
+        while not self.is_stopped:
+            pass
+
+    def stop(self):
+        self.image_sub.unregister()
+        print("unregistered from /camera/image_raw")
+        self.is_stopped = True
 
     def camera_callback(self, data):
         try:
@@ -213,7 +222,9 @@ class ObjectDetection:
 
             cv.circle(mask_black, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
             cv.circle(cropped_img, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
-        
+        else:
+            print("no  objects detected, stopping...")
+            self.stop()
         # --- Show only the masked parts of the image ---
         #cv.imshow("Box frontal face", mask_black)
         cv.imshow("cropped", cropped_img)

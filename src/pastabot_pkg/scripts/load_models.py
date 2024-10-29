@@ -113,10 +113,11 @@ def main_old():
         spawner = BoxSpawner()
         # Attendi un secondo per assicurarti che tutto sia inizializzato
         rospy.sleep(1)  
+        detector = ObjectDetection()
 
         while (True):  # Continua fino a quando il nodo non viene chiuso
             try:
-                choice = int(input("Insert 1 for 0.5kg box\nInsert 2 for 1kg box\nInsert 3 for 2kg box\nInsert 0 for Exit\nChoice:\n"))
+                choice = int(input("Insert 1 for light box\nInsert 2 for medium box\nInsert 3 for heavy box\nInsert 0 for Exit\nChoice:\n"))
             except ValueError: 
                 print('Expected a number')
                 continue  # Richiede nuovamente l'input
@@ -127,6 +128,7 @@ def main_old():
             print(spawner.box_names)
             spawner.spawn_box(list(spawner.sdf_paths.keys())[choice-1], (0.95, 0.0, 1.166), spawner.box_names[choice-1])
             rospy.sleep(2)  # Attendi che il box venga spawnato
+            detector.start()
             
     except rospy.ROSInterruptException:
         pass
@@ -159,4 +161,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main_old()
