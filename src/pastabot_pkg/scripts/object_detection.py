@@ -59,7 +59,8 @@ class ObjectDetection:
     def __init__(self):
         self.push_point_pub = rospy.Publisher("box/push_point", Point, queue_size=10)
         self.distance_pub = rospy.Publisher("box/push_distance", Float32, queue_size=10)
-        
+        self.bridge_object = CvBridge()
+
         self.threshold_wait = 15
         
         self.pixel_tollerence = 3
@@ -69,7 +70,7 @@ class ObjectDetection:
         self.first = True
         self.is_stopped = False
         self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.camera_callback)
-        self.bridge_object = CvBridge()
+        #self.bridge_object = CvBridge()
         self.start_end_points = {'start':None, 'end':None}
         self.counter_position = 0
         self.push_point = None
@@ -173,6 +174,15 @@ class ObjectDetection:
             self.push_point = (bottom_side.sum(-2) / 2).tolist()
             print("self.push_point (x, y)" + str(self.push_point))
 
+            if self.push_point:
+                point_msg = Point()
+                point_msg.x = self.push_point[0]
+                point_msg.y = self.push_point[1]
+                point_msg.z = 0.0
+                # Pubblica la posizione
+                self.push_point_pub.publish(point_msg)
+            
+
             
             if self.start_end_points['start'] is None:
                 self.start_end_points['start'] = self.push_point
@@ -197,14 +207,7 @@ class ObjectDetection:
                 real_distance = end_point_transformed - start_point_transformed
                 distance_norm = np.linalg.norm(real_distance)
                 
-                if self.push_point:
-                    point_msg = Point()
-                    point_msg.x = self.push_point[0]
-                    point_msg.y = self.push_point[1]
-                    point_msg.z = 0.0
                 
-                # Pubblica la posizione
-                self.push_point_pub.publish(point_msg)
                 
                 if self.counter_position == self.threshold_wait:
                     # Pubblica la distanza
