@@ -9,15 +9,21 @@ from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import Float32
 from geometry_msgs.msg import Point
 import logging
+from compute_final_push_point import distance_to_push_side
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def draw_line_with_points(image, start_point, end_point, distance):
+def draw_line_with_points(image, start_point, end_point, side_point, distance):
     
     # Disegna i cerchi per i punti di inizio e fine
     cv.circle(image, (int(start_point[0]), int(start_point[1])), 5, (0, 0, 255), thickness=-1)
     cv.circle(image, (int(end_point[0]), int(end_point[1])), 5, (0, 255, 0), thickness=-1)
+    
+    if side_point:
+        cv.circle(image, (int(side_point[0]), int(side_point[1])), 5, (255, 150, 75), thickness=-1)
+
 
     cv.line(image, 
              (int(start_point[0]), int(start_point[1])), 
@@ -59,9 +65,11 @@ class ObjectDetection:
     def __init__(self):
         self.push_point_pub = rospy.Publisher("box/push_point", Point, queue_size=10)
         self.distance_pub = rospy.Publisher("box/push_distance", Float32, queue_size=10)
+        self.side_pub = rospy.Publisher("box/side_point", Point, queue_size=10)
+
         self.bridge_object = CvBridge()
 
-        self.threshold_wait = 15
+        self.threshold_wait = 10
         
         self.pixel_tollerence = 3
         self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy')
@@ -174,10 +182,16 @@ class ObjectDetection:
             self.push_point = (bottom_side.sum(-2) / 2).tolist()
             print("self.push_point (x, y)" + str(self.push_point))
 
+            real_push_point = None
             if self.push_point:
+                real_push_point = cv.perspectiveTransform(
+                    np.array(self.push_point).reshape(1,1,2),
+                    self.homography_matrix
+                ).reshape(2).tolist()
+                
                 point_msg = Point()
-                point_msg.x = self.push_point[0]
-                point_msg.y = self.push_point[1]
+                point_msg.x = real_push_point[0]
+                point_msg.y = real_push_point[1]
                 point_msg.z = 0.0
                 # Pubblica la posizione
                 self.push_point_pub.publish(point_msg)
@@ -207,21 +221,33 @@ class ObjectDetection:
                 real_distance = end_point_transformed - start_point_transformed
                 distance_norm = np.linalg.norm(real_distance)
                 
-                
-                
+                side_point = None #
                 if self.counter_position == self.threshold_wait:
                     # Pubblica la distanza
                     self.distance_pub.publish(distance_norm)
 
+                    side_point = distance_to_push_side(
+                        push_point=real_push_point,
+                        side_lengths=[0.2, 0.2],
+                        distance=distance_norm
+                    )
+                    side_msg = Point()
+                    side_msg.x = side_point[0]
+                    side_msg.y = side_point[1]
+                    side_msg.z = 0.0
+                    self.side_pub.publish(side_msg)
+                    print(f"ATTENTION: Side point --> {side_point}")
+
                 print("Pixel distance: ", abs(distance))
                 print(f"Real distance: {real_distance}")
                 print(f"Distanza in norma:{distance_norm} ")
-                print(f"Matrice {self.homography_matrix}")
+                #print(f"Matrice {self.homography_matrix}")
 
-                draw_line_with_points(cropped_img, 
-                              self.start_end_points['start'], 
-                              self.start_end_points['end'],
-                              f"{distance_norm:.2f}m")
+                draw_line_with_points(image=cropped_img, 
+                              start_point=self.start_end_points['start'], 
+                              end_point=self.start_end_points['end'],
+                              side_point=None, # FIXME: remove
+                              distance=f"{distance_norm:.2f}m")
 
             cv.circle(mask_black, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
             cv.circle(cropped_img, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)

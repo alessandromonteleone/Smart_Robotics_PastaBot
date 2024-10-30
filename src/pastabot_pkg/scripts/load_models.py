@@ -41,7 +41,7 @@ class BoxSpawner:
             req.model_name = model_name
             
             # Esegui la delete con retry
-            max_attempts = 5
+            max_attempts = 2
             for attempt in range(max_attempts):
                 try:
                     response = self.delete_model(req)
@@ -78,7 +78,7 @@ class BoxSpawner:
         for model in self.box_names:
             # Prima elimina il modello esistente se presente
             self.delete_box(model)
-            
+        rospy.sleep(1)
         # Leggi il file SDF
         try:
             with open(self.sdf_paths[box_type], 'r') as f:
