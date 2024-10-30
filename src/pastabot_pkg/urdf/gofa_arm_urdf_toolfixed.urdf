@@ -27,7 +27,7 @@
         </inertial>
     </link>
     <gazebo reference="base_link">
-        <material>Gazebo/DarkGrey</material>
+        <material>Gazebo/Yellow</material>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
             <robotNamespace>/</robotNamespace>
         </plugin>
@@ -54,7 +54,7 @@
         </inertial>
     </link>
     <gazebo reference="link01_rev1">
-        <material>Gazebo/DarkGrey</material>
+        <material>Gazebo/Yellow</material>
     </gazebo>
 
     <!-- LINK01 DH - Modeling Cinematic Transformations -->
@@ -86,7 +86,7 @@
         </inertial>
     </link>
     <gazebo reference="link02_rev2">
-        <material>Gazebo/DarkGrey</material>
+        <material>Gazebo/Yellow</material>
     </gazebo>
 
     <!-- LINK02 DH - Modeling Cinematic Transformations -->
@@ -279,7 +279,7 @@
         <parent link="link01_DH"/>
         <child link="link02_rev2"/>
         <axis xyz="0 0 1"/>
-        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <limit lower="-1.5708" upper="1.5708" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
@@ -287,7 +287,7 @@
     <joint name="jnt2_DH" type="fixed">
         <parent link="link02_rev2"/>
         <child link="link02_DH"/>
-        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <limit lower="-1.5708" upper="1.5708" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 -0.444 0" rpy="0 0 -1.570795"/>
     </joint>
 
@@ -296,7 +296,7 @@
         <parent link="link02_DH"/>
         <child link="link03_rev3"/>
         <axis xyz="0 0 1"/>
-        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <limit lower="-1.5708" upper="1.5708" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
@@ -304,7 +304,7 @@
     <joint name="jnt3_DH" type="fixed">
         <parent link="link03_rev3"/>
         <child link="link03_DH"/>
-        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <limit lower="-1.5708" upper="1.5708" velocity="50.0" effort="1000.0"/>
         <origin xyz="0.11 0 0" rpy="-1.570795 0 0"/>
     </joint>
 
