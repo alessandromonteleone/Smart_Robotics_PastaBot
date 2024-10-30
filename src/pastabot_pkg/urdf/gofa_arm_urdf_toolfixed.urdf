@@ -374,12 +374,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt1_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt1_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -388,12 +388,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt2_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt2_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -402,12 +402,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt3_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt3_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -416,12 +416,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt4_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt4_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -430,12 +430,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt5_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt5_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -444,12 +444,12 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt6_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt6_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 

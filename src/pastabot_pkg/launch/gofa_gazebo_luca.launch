@@ -3,16 +3,16 @@
 <launch>
 
     <!-- GAZEBO Options -->
-    <arg name="gazebo_gui" default="true" doc="Start Gazebo GUI"/>                                                    <!-- Gazebo GUI -->
-    <arg name="paused" default="false" doc="Start Gazebo paused"/>                                                    <!-- Gazebo Simulation paused -->
-    <arg name="world_name" default="$(find pastabot_pkg)/worlds/pasta.world" doc="Gazebo world file"/>                <!-- World name -->
-    <arg name="world_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>                 <!-- World Pose -->
-    <arg name="arg_x" default="-0.50" />                                                                              <!-- X coordinate for Base Link -->
-    <arg name="arg_y" default="0.00" />                                                                               <!-- Y coordinate for Base Link -->
-    <arg name="arg_z" default="1" />                                                                                  <!-- Z coordinate for Base Link -->
-    <arg name="arg_Roll" default="0.00" />                                                                            <!-- Roll for Base Link -->
-    <arg name="arg_Pitch" default="0.00" />                                                                           <!-- Pitch for Base Link -->
-    <arg name="arg_Yaw" default="0.00" />                                                                             <!-- Yaw coordinate for Base Link -->
+    <arg name="gazebo_gui" default="true" doc="Start Gazebo GUI"/>                                                  <!-- Gazebo GUI -->
+    <arg name="paused" default="false" doc="Start Gazebo paused"/>                                                  <!-- Gazebo Simulation paused -->
+    <arg name="world_name" default="$(find pastabot_pkg)/worlds/pasta.world" doc="Gazebo world file"/>              <!-- World name -->
+    <arg name="world_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>               <!-- World Pose -->
+    <arg name="arg_x" default="-0.50"/>                                                                              <!-- X coordinate for Base Link -->
+    <arg name="arg_y" default="0.00"/>                                                                              <!-- Y coordinate for Base Link -->
+    <arg name="arg_z" default="1.015"/>                                                                             <!-- Z coordinate for Base Link -->
+    <arg name="arg_Roll" default="0.00"/>                                                                           <!-- Roll for Base Link -->
+    <arg name="arg_Pitch" default="0.00"/>                                                                          <!-- Pitch for Base Link -->
+    <arg name="arg_Yaw" default="0.00"/>                                                                            <!-- Yaw coordinate for Base Link -->
     <arg name="initial_joint_positions" default=" -J jnt1_rev 0 -J jnt2_rev 0 -J jnt3_rev 0 -J jnt4_rev 0 -J jnt5_rev 1.5708 -J jnt6_rev 0" 
         doc="Initial joint configuration of the robot"/>                                                            <!-- Initial Joint Positions -->
 
@@ -93,9 +93,17 @@
     <include file="$(find pastabot_pkg_moveit)/launch/default_warehouse_db.launch" if="$(arg db)">
         <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
     </include>
-
-
+    
+    
     <!-- SCRIPTS -->
     <!-- Execute the Python script to control the robot -->
-    <node name="move_gofa_robot" pkg="pastabot_pkg" type="continuous_move.py" args="-d $(find pastabot_pkg)/scripts/continuous_move.py" output="screen"/> -->
+    <!-- <node name="move_gofa_robot" pkg="pastabot_pkg" type="continuous_move.py" args="-d $(find pastabot_pkg)/scripts/continuous_move.py" output="screen">       
+        <param name="arg_x" value="$(arg arg_x)" />
+        <param name="arg_y" value="$(arg arg_y)" />
+        <param name="arg_z" value="$(arg arg_z)" />
+        <param name="arg_Roll" value="$(arg arg_Roll)" />
+        <param name="arg_Pitch" value="$(arg arg_Pitch)" />
+        <param name="arg_Yaw" value="$(arg arg_Yaw)" />
+    </node> -->
+    
 </launch>
