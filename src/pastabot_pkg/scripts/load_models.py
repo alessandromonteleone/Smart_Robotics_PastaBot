@@ -1,4 +1,5 @@
-##!/usr/bin/env python3
+#!/usr/bin/env python3
+
 import rospy
 import rospkg
 from gazebo_msgs.srv import DeleteModel, SpawnModel, DeleteModelRequest

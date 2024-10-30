@@ -3,8 +3,7 @@
 import sys
 import rospy
 import moveit_commander
-import moveit_msgs.msg
-from geometry_msgs.msg import Pose, PoseStamped, Point
+from geometry_msgs.msg import Pose
 import tf.transformations as tf
 import math
 import random
