@@ -19,7 +19,7 @@ class BoxSpawner:
         
         self.spawn_model = rospy.ServiceProxy('/gazebo/spawn_sdf_model', SpawnModel)
         self.delete_model = rospy.ServiceProxy('/gazebo/delete_model', DeleteModel)
-        self.box_names = ['box_half_kg', 'box_one_kg', 'box_two_kg']
+        self.box_names = ['box_light', 'box_medium', 'box_heavy']
         
         # Ottieni il percorso del package
         self.rospack = rospkg.RosPack()
@@ -28,9 +28,9 @@ class BoxSpawner:
         #self.package_path = self.rospack.get_path('pastabot_pkg')
         # Percorsi dei file SDF
         self.sdf_paths = {
-            'light': os.path.join(self.package_path, 'models', 'box_half_kg', 'model.sdf'),
-            'medium': os.path.join(self.package_path, 'models', 'box_one_kg', 'model.sdf'),
-            'heavy': os.path.join(self.package_path, 'models', 'box_two_kg', 'model.sdf')
+            'light': os.path.join(self.package_path, 'models', 'box_light', 'model.sdf'),
+            'medium': os.path.join(self.package_path, 'models', 'box_medium', 'model.sdf'),
+            'heavy': os.path.join(self.package_path, 'models', 'box_heavy', 'model.sdf')
         }
 
 
@@ -109,7 +109,7 @@ class BoxSpawner:
         except rospy.ServiceException as e:
             rospy.logerr(f"Errore nello spawn del modello: {e}")
 
-def main_old():
+def main():
     try:
         spawner = BoxSpawner()
         # Attendi un secondo per assicurarti che tutto sia inizializzato
@@ -125,8 +125,8 @@ def main_old():
             
             if choice == 0:
                 break
-            print(list(spawner.sdf_paths.keys()))
-            print(spawner.box_names)
+            #print(list(spawner.sdf_paths.keys()))
+            #print(spawner.box_names)
             spawner.spawn_box(list(spawner.sdf_paths.keys())[choice-1], (0.95, 0.0, 1.166), spawner.box_names[choice-1])
             rospy.sleep(2)  # Attendi che il box venga spawnato
             detector.start()
@@ -135,6 +135,7 @@ def main_old():
         pass
 
 
+'''
 def main():
     try:
         spawner = BoxSpawner()
@@ -159,7 +160,7 @@ def main():
                 
     except rospy.ROSInterruptException:
         pass
-
+'''
 
 if __name__ == '__main__':
-    main_old()
+    main()

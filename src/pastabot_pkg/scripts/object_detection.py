@@ -95,7 +95,7 @@ class ObjectDetection:
             cv_image = self.bridge_object.imgmsg_to_cv2(data, desired_encoding="bgr8")
             if self.first:
                 self.first = False
-                print("first frame")
+                #print("first frame")
                 return
         except CvBridgeError as e:
             print(e)
@@ -180,7 +180,7 @@ class ObjectDetection:
                 prev_push_point = self.push_point
             
             self.push_point = (bottom_side.sum(-2) / 2).tolist()
-            print("self.push_point (x, y)" + str(self.push_point))
+            #print("self.push_point (x, y)" + str(self.push_point))
 
             real_push_point = None
             if self.push_point:
@@ -202,7 +202,8 @@ class ObjectDetection:
                 self.start_end_points['start'] = self.push_point
 
             elif (abs(prev_push_point[1]-self.push_point[1]) < self.pixel_tollerence 
-                  and abs(self.start_end_points['start'][1]-self.push_point[1])> 5):
+                  and abs(self.start_end_points['start'][1]-self.push_point[1])> 5 
+                  and self.counter_position <= self.threshold_wait):
                 self.counter_position+=1
                 print("counter:", self.counter_position)
             

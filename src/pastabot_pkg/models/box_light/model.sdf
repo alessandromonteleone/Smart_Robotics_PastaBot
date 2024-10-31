@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='box_half_kg'>
+  <model name='box_light'>
     <link name='box_01_body'>
       <pose>0 0 0 0 -0 0</pose>
       <inertial>
