@@ -16,7 +16,7 @@ from rosgraph_msgs.msg import Clock
 SWITCH_POINT = [0.45, 0.0, 1.015]
 INTERMEDIATE_POINT = [0.70, 0.0, 1.015]
 PUSH_POINT = [0.90, 0.0, 1.015]
-HOME = [0.20, -0.40, 1.035]
+HOME = [0.20, 0.40, 1.035]
 last_clock_time = None  # Variabile per tenere traccia dell'ultimo tempo ricevuto
 
 
@@ -72,64 +72,50 @@ def robot_move():
     while not rospy.is_shutdown():        
         #x, y, z = random_pose(base_x, base_y, base_z, min_z=0.00)
 
-        ########################################################################################## SWITCH POINT
-        pose_target = Pose()
-        pose_target.position.x = SWITCH_POINT[0] - 0.20
-        pose_target.position.y = SWITCH_POINT[1] - 0.0
-        pose_target.position.z = SWITCH_POINT[2] - 1.015
-        pose_target.orientation.x = quaternion[0]
-        pose_target.orientation.y = quaternion[1]
-        pose_target.orientation.z = quaternion[2]
-        pose_target.orientation.w = quaternion[3]
 
-        # Setting and planning movements
-        robot_arm.set_pose_target(pose_target)
-        plan = robot_arm.plan()
+        # Waypoints per la traiettoria continua
+        waypoints = []
+    
+        # SWITCH POINT
+        switch_pose = Pose()
+        switch_pose.position.x = SWITCH_POINT[0] - 0.20
+        switch_pose.position.y = SWITCH_POINT[1] - 0.0
+        switch_pose.position.z = SWITCH_POINT[2] - 1.015
+        switch_pose.orientation.x, switch_pose.orientation.y, switch_pose.orientation.z, switch_pose.orientation.w = quaternion
+        waypoints.append(switch_pose)
+        
+        # INTERMEDIATE POINT
+        intermediate_pose = Pose()
+        intermediate_pose.position.x = INTERMEDIATE_POINT[0] - 0.20
+        intermediate_pose.position.y = INTERMEDIATE_POINT[1] - 0.0
+        intermediate_pose.position.z = INTERMEDIATE_POINT[2] - 1.015
+        intermediate_pose.orientation.x, intermediate_pose.orientation.y, intermediate_pose.orientation.z, intermediate_pose.orientation.w = quaternion
+        waypoints.append(intermediate_pose)
+        
+        # PUSH POINT
+        push_pose = Pose()
+        push_pose.position.x = PUSH_POINT[0] - 0.20
+        push_pose.position.y = PUSH_POINT[1] - 0.0
+        push_pose.position.z = PUSH_POINT[2] - 1.015
+        push_pose.orientation.x, push_pose.orientation.y, push_pose.orientation.z, push_pose.orientation.w = quaternion
+        waypoints.append(push_pose)
 
-        if plan:
-            rospy.logwarn(f"Moving plan towards position ({pose_target.position.x:.2f}, {pose_target.position.y:.2f}, {pose_target.position.z:.2f}) generated successfully")
-            if robot_arm.go(wait=True):
-                rospy.logwarn("Movement done successfully")
-                # continue
-            else:
-                rospy.logerr("Movement failed")
+        # Pianificazione della traiettoria cartesiana
+        (plan, fraction) = robot_arm.compute_cartesian_path(waypoints, eef_step=0.01)
+
+        if fraction == 1.0:
+            rospy.loginfo("Trajectory planned successfully, executing...")
+            robot_arm.execute(plan, wait=True)
+            rospy.loginfo("Trajectory execution completed successfully")
         else:
-            rospy.logerr("Moving plan failed")
+            rospy.logwarn(f"Trajectory planning was incomplete (fraction: {fraction*100:.2f}%)")
 
         # Stopping robot arm and deleting target
         robot_arm.stop()
         robot_arm.clear_pose_targets()
-
-
-        ########################################################################################### PUSH POINT
-        pose_target.position.x = PUSH_POINT[0] - 0.20
-        pose_target.position.y = PUSH_POINT[1] - 0.0
-        pose_target.position.z = PUSH_POINT[2] - 1.015
-        pose_target.orientation.x = quaternion[0]
-        pose_target.orientation.y = quaternion[1]
-        pose_target.orientation.z = quaternion[2]
-        pose_target.orientation.w = quaternion[3]
-
-        # Setting and planning movements
-        robot_arm.set_pose_target(pose_target)
-        plan = robot_arm.plan()
-
-        if plan:
-            rospy.logwarn(f"Moving plan towards position ({pose_target.position.x:.2f}, {pose_target.position.y:.2f}, {pose_target.position.z:.2f}) generated successfully")
-            if robot_arm.go(wait=True):
-                rospy.logwarn("Movement done successfully")
-                # continue
-            else:
-                rospy.logerr("Movement failed")
-        else:
-            rospy.logerr("Moving plan failed")
-            
-        # Stopping robot arm and deleting target
-        robot_arm.stop()
-        robot_arm.clear_pose_targets()
-
 
         ########################################################################################### HOME
+        pose_target = Pose()
         pose_target.position.x = HOME[0] - 0.20
         pose_target.position.y = HOME[1] - 0.0
         pose_target.position.z = HOME[2] - 1.015
