@@ -14,7 +14,9 @@ from rosgraph_msgs.msg import Clock
 
 ## GLOBAL VARIABLES
 SWITCH_POINT = [0.45, 0.0, 1.015]
+INTERMEDIATE_POINT = [0.70, 0.0, 1.015]
 PUSH_POINT = [0.90, 0.0, 1.015]
+HOME = [0.20, -0.40, 1.035]
 last_clock_time = None  # Variabile per tenere traccia dell'ultimo tempo ricevuto
 
 
@@ -67,65 +69,94 @@ def robot_move():
     quaternion = tf.quaternion_from_euler(roll, pitch, yaw)
 
     # Generating random position
-    '''
-    while not rospy.is_shutdown():
-        #x, y, z = random_pose(base_x, base_y, base_z, min_z=0.00)'''
+    while not rospy.is_shutdown():        
+        #x, y, z = random_pose(base_x, base_y, base_z, min_z=0.00)
 
-    # SWITCH POINT
-    pose_target = Pose()
-    pose_target.position.x = SWITCH_POINT[0] - 0.20
-    pose_target.position.y = SWITCH_POINT[1] - 0.0
-    pose_target.position.z = SWITCH_POINT[2] - 1.015
-    pose_target.orientation.x = quaternion[0]
-    pose_target.orientation.y = quaternion[1]
-    pose_target.orientation.z = quaternion[2]
-    pose_target.orientation.w = quaternion[3]
+        ########################################################################################## SWITCH POINT
+        pose_target = Pose()
+        pose_target.position.x = SWITCH_POINT[0] - 0.20
+        pose_target.position.y = SWITCH_POINT[1] - 0.0
+        pose_target.position.z = SWITCH_POINT[2] - 1.015
+        pose_target.orientation.x = quaternion[0]
+        pose_target.orientation.y = quaternion[1]
+        pose_target.orientation.z = quaternion[2]
+        pose_target.orientation.w = quaternion[3]
 
-    # Setting and planning movements
-    robot_arm.set_pose_target(pose_target)
-    plan = robot_arm.plan()
+        # Setting and planning movements
+        robot_arm.set_pose_target(pose_target)
+        plan = robot_arm.plan()
 
-    if plan:
-        rospy.logwarn(f"Moving plan towards position ({pose_target.position.x:.2f}, {pose_target.position.y:.2f}, {pose_target.position.z:.2f}) generated successfully")
-        if robot_arm.go(wait=True):
-            rospy.logwarn("Movement done successfully")
-            # continue
+        if plan:
+            rospy.logwarn(f"Moving plan towards position ({pose_target.position.x:.2f}, {pose_target.position.y:.2f}, {pose_target.position.z:.2f}) generated successfully")
+            if robot_arm.go(wait=True):
+                rospy.logwarn("Movement done successfully")
+                # continue
+            else:
+                rospy.logerr("Movement failed")
         else:
-            rospy.logerr("Movement failed")
-    else:
-        rospy.logerr("Moving plan failed")
+            rospy.logerr("Moving plan failed")
 
-    # Stopping robot arm and deleting target
-    robot_arm.stop()
-    robot_arm.clear_pose_targets()
+        # Stopping robot arm and deleting target
+        robot_arm.stop()
+        robot_arm.clear_pose_targets()
 
 
-    # PUSH POINT
-    pose_target.position.x = PUSH_POINT[0] - 0.20
-    pose_target.position.y = PUSH_POINT[1] - 0.0
-    pose_target.position.z = PUSH_POINT[2] - 1.015
-    pose_target.orientation.x = quaternion[0]
-    pose_target.orientation.y = quaternion[1]
-    pose_target.orientation.z = quaternion[2]
-    pose_target.orientation.w = quaternion[3]
+        ########################################################################################### PUSH POINT
+        pose_target.position.x = PUSH_POINT[0] - 0.20
+        pose_target.position.y = PUSH_POINT[1] - 0.0
+        pose_target.position.z = PUSH_POINT[2] - 1.015
+        pose_target.orientation.x = quaternion[0]
+        pose_target.orientation.y = quaternion[1]
+        pose_target.orientation.z = quaternion[2]
+        pose_target.orientation.w = quaternion[3]
 
-    # Setting and planning movements
-    robot_arm.set_pose_target(pose_target)
-    plan = robot_arm.plan()
+        # Setting and planning movements
+        robot_arm.set_pose_target(pose_target)
+        plan = robot_arm.plan()
 
-    if plan:
-        rospy.logwarn(f"Moving plan towards position ({pose_target.position.x:.2f}, {pose_target.position.y:.2f}, {pose_target.position.z:.2f}) generated successfully")
-        if robot_arm.go(wait=True):
-            rospy.logwarn("Movement done successfully")
-            # continue
+        if plan:
+            rospy.logwarn(f"Moving plan towards position ({pose_target.position.x:.2f}, {pose_target.position.y:.2f}, {pose_target.position.z:.2f}) generated successfully")
+            if robot_arm.go(wait=True):
+                rospy.logwarn("Movement done successfully")
+                # continue
+            else:
+                rospy.logerr("Movement failed")
         else:
-            rospy.logerr("Movement failed")
-    else:
-        rospy.logerr("Moving plan failed")
-        
-    # Stopping robot arm and deleting target
-    robot_arm.stop()
-    robot_arm.clear_pose_targets()
+            rospy.logerr("Moving plan failed")
+            
+        # Stopping robot arm and deleting target
+        robot_arm.stop()
+        robot_arm.clear_pose_targets()
+
+
+        ########################################################################################### HOME
+        pose_target.position.x = HOME[0] - 0.20
+        pose_target.position.y = HOME[1] - 0.0
+        pose_target.position.z = HOME[2] - 1.015
+        pose_target.orientation.x = quaternion[0]
+        pose_target.orientation.y = quaternion[1]
+        pose_target.orientation.z = quaternion[2]
+        pose_target.orientation.w = quaternion[3]
+
+        # Setting and planning movements
+        robot_arm.set_pose_target(pose_target)
+        plan = robot_arm.plan()
+
+        if plan:
+            rospy.logwarn(f"Moving plan towards position ({pose_target.position.x:.2f}, {pose_target.position.y:.2f}, {pose_target.position.z:.2f}) generated successfully")
+            if robot_arm.go(wait=True):
+                rospy.logwarn("Movement done successfully")
+                # continue
+            else:
+                rospy.logerr("Movement failed")
+        else:
+            rospy.logerr("Moving plan failed")
+            
+        # Stopping robot arm and deleting target
+        robot_arm.stop()
+        robot_arm.clear_pose_targets()
+
+
 
     # Shutdown MoveIt
     moveit_commander.roscpp_shutdown()
