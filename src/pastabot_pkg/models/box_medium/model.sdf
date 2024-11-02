@@ -6,14 +6,14 @@
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <inertia>
-          <ixx>0.00406250</ixx>
+          <ixx>0.00081250</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00361250</iyy>
+          <iyy>0.00072250</iyy>
           <iyz>0</iyz>
-          <izz>0.00205000</izz>
+          <izz>0.00041000</izz>
         </inertia>
-        <mass>1.5</mass>
+        <mass>0.3</mass>
       </inertial>
       <gravity>1</gravity>
       <self_collide>0</self_collide>
