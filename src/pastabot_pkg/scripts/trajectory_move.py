@@ -13,11 +13,11 @@ from rosgraph_msgs.msg import Clock
 
 
 ## GLOBAL VARIABLES
-SWITCH_POINT = [0.45, 0.0, 1.015]
-INTERMEDIATE_POINT = [0.70, 0.0, 1.035]
-STOP_POINT = [0.90, 0.0, 1.035]
-HOME = [0.20, 0.40, 1.035]
-last_clock_time = None  # Variabile per tenere traccia dell'ultimo tempo ricevuto
+CURRENT_ROBOT_POSE = [0.20, 0.0, 1.015]
+START_POINT = [0.70, 0.0, 1.035]
+STOP_POINT = [0.95, 0.0, 1.035]
+HOME = [0.20, -0.40, 1.035]
+last_clock_time = None 
 
 
 ## FUNCTIONS
@@ -50,6 +50,8 @@ def robot_move():
     rospy.wait_for_message('/joint_states', JointState)
     robot_arm = moveit_commander.MoveGroupCommander("gofa_group")
     robot_arm.set_planning_time(1.0)
+    robot_arm.set_max_velocity_scaling_factor(1.0)
+    robot_arm.set_max_acceleration_scaling_factor(1.0)
     planning_scene = moveit_commander.PlanningSceneInterface()
     rospy.loginfo(f"Waiting for service {planning_scene}...")
     rospy.sleep(1)
@@ -65,74 +67,79 @@ def robot_move():
     rospy.loginfo(f"Current Robot Base 6D Pose: [{base_x}, {base_y}, {base_z}, {base_Roll}, {base_Pitch}, {base_Yaw}]")
 
     # Fixed orientation in Quaternions
-    roll, pitch, yaw = 0.0, math.radians(180.0), 0.0
-    quaternion = tf.quaternion_from_euler(roll, pitch, yaw)
+    vertical_quaternion = tf.quaternion_from_euler(math.radians(0.0), math.radians(180.0), math.radians(0.0))  # Roll, Pitch and Yaw
 
-    # Generating random position
+
+    # START PLAN to HOME POINT
+    # HOME POINT
+    home_pose = Pose()
+    home_pose.position.x = HOME[0] - CURRENT_ROBOT_POSE[0]
+    home_pose.position.y = HOME[1] - CURRENT_ROBOT_POSE[1]
+    home_pose.position.z = HOME[2] - CURRENT_ROBOT_POSE[2]
+    home_pose.orientation.x, home_pose.orientation.y, home_pose.orientation.z, home_pose.orientation.w = vertical_quaternion
+
+    # Setting and planning movements
+    robot_arm.set_pose_target(home_pose)
+    home_plan = robot_arm.plan()
+    if home_plan:
+        rospy.logwarn(f"Moving plan towards position ({home_pose.position.x:.2f}, {home_pose.position.y:.2f}, {home_pose.position.z:.2f}) generated successfully")
+        if robot_arm.go(wait=True):
+            rospy.logwarn("Movement done successfully")
+            # continue
+        else:
+            rospy.logerr("Movement failed")
+    else:
+        rospy.logerr("Moving plan failed")
+    robot_arm.stop()
+    robot_arm.clear_pose_targets()
+
+
+    # PUSH PLAN
+    # Waypoints per la traiettoria continua
+    waypoints = []
+    waypoints.append(home_pose)
+    
+    # START POINT
+    start_pose = Pose()
+    start_pose.position.x = START_POINT[0] - CURRENT_ROBOT_POSE[0]
+    start_pose.position.y = START_POINT[1] - CURRENT_ROBOT_POSE[1]
+    start_pose.position.z = START_POINT[2] - CURRENT_ROBOT_POSE[2]
+    start_pose.orientation.x, start_pose.orientation.y, start_pose.orientation.z, start_pose.orientation.w = vertical_quaternion
+    waypoints.append(start_pose)
+       
+    # STOP POINT
+    stop_pose = Pose()
+    stop_pose.position.x = STOP_POINT[0] - CURRENT_ROBOT_POSE[0]
+    stop_pose.position.y = STOP_POINT[1] - CURRENT_ROBOT_POSE[1]
+    stop_pose.position.z = STOP_POINT[2] - CURRENT_ROBOT_POSE[2]
+    stop_pose.orientation.x, stop_pose.orientation.y, stop_pose.orientation.z, stop_pose.orientation.w = vertical_quaternion
+    waypoints.append(stop_pose)
+
+    # Pianificazione della traiettoria cartesiana
+    (push_plan, push_fraction) = robot_arm.compute_cartesian_path(waypoints, eef_step=0.01)
+
+
+    # CYCLE
     while not rospy.is_shutdown():        
         #x, y, z = random_pose(base_x, base_y, base_z, min_z=0.00)
 
-
-        rospy.sleep(20)
-
-
-        # Waypoints per la traiettoria continua
-        waypoints = []
-    
-        # SWITCH POINT
-        switch_pose = Pose()
-        switch_pose.position.x = SWITCH_POINT[0] - 0.20
-        switch_pose.position.y = SWITCH_POINT[1] - 0.0
-        switch_pose.position.z = SWITCH_POINT[2] - 1.015
-        switch_pose.orientation.x, switch_pose.orientation.y, switch_pose.orientation.z, switch_pose.orientation.w = quaternion
-        waypoints.append(switch_pose)
-        
-        # INTERMEDIATE POINT
-        intermediate_pose = Pose()
-        intermediate_pose.position.x = INTERMEDIATE_POINT[0] - 0.20
-        intermediate_pose.position.y = INTERMEDIATE_POINT[1] - 0.0
-        intermediate_pose.position.z = INTERMEDIATE_POINT[2] - 1.015
-        intermediate_pose.orientation.x, intermediate_pose.orientation.y, intermediate_pose.orientation.z, intermediate_pose.orientation.w = quaternion
-        waypoints.append(intermediate_pose)
-        
-        # PUSH POINT
-        stop_pose = Pose()
-        stop_pose.position.x = STOP_POINT[0] - 0.20
-        stop_pose.position.y = STOP_POINT[1] - 0.0
-        stop_pose.position.z = STOP_POINT[2] - 1.015
-        stop_pose.orientation.x, stop_pose.orientation.y, stop_pose.orientation.z, stop_pose.orientation.w = quaternion
-        waypoints.append(stop_pose)
-
-        # Pianificazione della traiettoria cartesiana
-        (plan, fraction) = robot_arm.compute_cartesian_path(waypoints, eef_step=0.01)
-
-        if fraction == 1.0:
+        # PUSH PLAN
+        if push_fraction == 1.0:
             rospy.loginfo("Trajectory planned successfully, executing...")
-            robot_arm.execute(plan, wait=True)
+            robot_arm.execute(push_plan, wait=True)
             rospy.loginfo("Trajectory execution completed successfully")
         else:
-            rospy.logwarn(f"Trajectory planning was incomplete (fraction: {fraction*100:.2f}%)")
-
-        # Stopping robot arm and deleting target
+            rospy.logwarn(f"Trajectory planning was incomplete (fraction: {push_fraction*100:.2f}%)")
         robot_arm.stop()
         robot_arm.clear_pose_targets()
 
-        ########################################################################################### HOME
-        pose_target = Pose()
-        pose_target.position.x = HOME[0] - 0.20
-        pose_target.position.y = HOME[1] - 0.0
-        pose_target.position.z = HOME[2] - 1.015
-        pose_target.orientation.x = quaternion[0]
-        pose_target.orientation.y = quaternion[1]
-        pose_target.orientation.z = quaternion[2]
-        pose_target.orientation.w = quaternion[3]
-
+        
+        # HOME PLAN
         # Setting and planning movements
-        robot_arm.set_pose_target(pose_target)
-        plan = robot_arm.plan()
-
-        if plan:
-            rospy.logwarn(f"Moving plan towards position ({pose_target.position.x:.2f}, {pose_target.position.y:.2f}, {pose_target.position.z:.2f}) generated successfully")
+        robot_arm.set_pose_target(home_pose)
+        home_plan = robot_arm.plan()
+        if home_plan:
+            rospy.logwarn(f"Moving plan towards position ({home_pose.position.x:.2f}, {home_pose.position.y:.2f}, {home_pose.position.z:.2f}) generated successfully")
             if robot_arm.go(wait=True):
                 rospy.logwarn("Movement done successfully")
                 # continue
@@ -140,11 +147,11 @@ def robot_move():
                 rospy.logerr("Movement failed")
         else:
             rospy.logerr("Moving plan failed")
-            
-        # Stopping robot arm and deleting target
         robot_arm.stop()
         robot_arm.clear_pose_targets()
 
+        
+        rospy.sleep(15)
 
 
     # Shutdown MoveIt
