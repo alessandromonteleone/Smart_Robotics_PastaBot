@@ -58,6 +58,9 @@
               <slip1>0</slip1>
               <slip2>0</slip2>
             </ode>
+            <bullet>
+              <friction>0.5</friction>
+            </bullet>
             <torsional>
               <coefficient>1</coefficient>
               <patch_radius>0</patch_radius>
