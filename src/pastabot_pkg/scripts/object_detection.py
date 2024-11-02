@@ -72,6 +72,8 @@ class ObjectDetection:
         self.threshold_wait = 10
         
         self.pixel_tollerence = 3
+        self.area_threshold = 10
+        self.rgb_threshold = [30, 30, 30]
         self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy')
 
     def start(self):
@@ -89,6 +91,7 @@ class ObjectDetection:
         self.image_sub.unregister()
         print("unregistered from /camera/image_raw")
         self.is_stopped = True
+        
 
     def camera_callback(self, data):
         try:
@@ -147,11 +150,16 @@ class ObjectDetection:
         """
 
         # --- Mask creation ---
-        threshold_black = 30
+        threshold_black = np.array(self.rgb_threshold).reshape(1,1,3)
 
         # Mask for almost black pixels
-        mask_black = ((cropped_img <= threshold_black) * 255).astype(np.uint8)
+        print('----', cropped_img.shape)
+
+        mask_black = ((cropped_img <= threshold_black)* 255).astype(np.uint8)
+        mask_black = np.prod(mask_black, axis=-1, keepdims=True, dtype=np.uint8)
+        mask_black = np.concatenate([mask_black, mask_black, mask_black], axis=-1)
         mask_black = cv.cvtColor(mask_black, cv.COLOR_BGR2GRAY)
+        cv.imshow("maschera nera: ", mask_black)
         
         contours, _ = cv.findContours(mask_black, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
@@ -163,7 +171,7 @@ class ObjectDetection:
         objects_detected = []
         for cnt in contours:
             area = cv.contourArea(cnt)
-            if area > 20:
+            if area > self.area_threshold:
                 cnt = cv.approxPolyDP(cnt, 0.03 * cv.arcLength(cnt, True), True)
                 if cnt.shape[0] == 4:
                     objects_detected.append(cnt)
