@@ -14,8 +14,8 @@ from rosgraph_msgs.msg import Clock
 
 ## GLOBAL VARIABLES
 SWITCH_POINT = [0.45, 0.0, 1.015]
-INTERMEDIATE_POINT = [0.70, 0.0, 1.015]
-PUSH_POINT = [0.90, 0.0, 1.015]
+INTERMEDIATE_POINT = [0.70, 0.0, 1.035]
+STOP_POINT = [0.90, 0.0, 1.035]
 HOME = [0.20, 0.40, 1.035]
 last_clock_time = None  # Variabile per tenere traccia dell'ultimo tempo ricevuto
 
@@ -73,6 +73,9 @@ def robot_move():
         #x, y, z = random_pose(base_x, base_y, base_z, min_z=0.00)
 
 
+        rospy.sleep(20)
+
+
         # Waypoints per la traiettoria continua
         waypoints = []
     
@@ -93,12 +96,12 @@ def robot_move():
         waypoints.append(intermediate_pose)
         
         # PUSH POINT
-        push_pose = Pose()
-        push_pose.position.x = PUSH_POINT[0] - 0.20
-        push_pose.position.y = PUSH_POINT[1] - 0.0
-        push_pose.position.z = PUSH_POINT[2] - 1.015
-        push_pose.orientation.x, push_pose.orientation.y, push_pose.orientation.z, push_pose.orientation.w = quaternion
-        waypoints.append(push_pose)
+        stop_pose = Pose()
+        stop_pose.position.x = STOP_POINT[0] - 0.20
+        stop_pose.position.y = STOP_POINT[1] - 0.0
+        stop_pose.position.z = STOP_POINT[2] - 1.015
+        stop_pose.orientation.x, stop_pose.orientation.y, stop_pose.orientation.z, stop_pose.orientation.w = quaternion
+        waypoints.append(stop_pose)
 
         # Pianificazione della traiettoria cartesiana
         (plan, fraction) = robot_arm.compute_cartesian_path(waypoints, eef_step=0.01)

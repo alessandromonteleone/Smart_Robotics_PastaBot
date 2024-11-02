@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <robot name="gofa_arm_urdf">
 
 
@@ -213,6 +214,16 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0"/>
         </inertial>
+        <gazebo>
+            <sensor type="force_torque" name="ft_sensor">
+                <always_on>true</always_on>
+                <update_rate>100.0</update_rate>
+                <force_torque>
+                    <frame>child</frame>
+                    <measure_direction>child_to_parent</measure_direction>
+                </force_torque>
+            </sensor>
+        </gazebo>
     </link>
     <gazebo reference="link06_rev6">
         <material>Gazebo/Yellow</material>
@@ -265,6 +276,7 @@
         <axis xyz="0 0 1"/>
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
+        <dynamics damping="0.5" friction="0.5"/>
     </joint>
 
     <!-- JOINT1 DH -->
@@ -281,6 +293,7 @@
         <axis xyz="0 0 1"/>
         <limit lower="-1.5708" upper="1.5708" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
+        <dynamics damping="0.5" friction="0.5"/>
     </joint>
 
     <!-- JOINT2 DH -->
@@ -298,6 +311,7 @@
         <axis xyz="0 0 1"/>
         <limit lower="-1.5708" upper="1.5708" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
+        <dynamics damping="0.5" friction="0.5"/>
     </joint>
 
     <!-- JOINT3 DH -->
@@ -315,6 +329,7 @@
         <axis xyz="0 0 1"/>
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
+        <dynamics damping="0.5" friction="0.5"/>
     </joint>
 
     <!-- JOINT4 DH -->
@@ -332,6 +347,7 @@
         <axis xyz="0 0 1"/>
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
+        <dynamics damping="0.5" friction="0.5"/>
     </joint>
 
     <!-- JOINT5 DH -->
@@ -349,7 +365,11 @@
         <axis xyz="0 0 1"/>
         <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
+        <dynamics damping="0.5" friction="0.5"/>
     </joint>
+    <gazebo reference="jnt6_rev">
+        <provideFeedback>true</provideFeedback>  <!-- Enable Joint Feedback for End Effector Joint -->
+    </gazebo>
 
     <!-- JOINT6 DH -->
     <joint name="jnt6_DH" type="fixed">
@@ -374,12 +394,10 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt1_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt1_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -388,12 +406,10 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt2_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt2_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -402,12 +418,10 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt3_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt3_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -416,12 +430,10 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt4_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt4_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -430,12 +442,10 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt5_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt5_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
@@ -444,20 +454,29 @@
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="jnt6_rev">
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </joint>
         <actuator name="jnt6_rev_motor">
             <mechanicalReduction>1</mechanicalReduction>
             <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-            <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
         </actuator>
     </transmission>
 
 
-    <!-- Gazebo Control -->
+    <!-- Gazebo -->
     <gazebo>
+        <!-- Control Plugin -->
         <plugin name="control" filename="libgazebo_ros_control.so">
             <robotNamespace>/</robotNamespace>
+            <controlPeriod>0.001</controlPeriod>
+            <robotParam>/robot_description</robotParam>
+        </plugin>
+
+        <!-- Force Sensor Plugin -->
+        <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+            <updateRate>100.0</updateRate>
+            <topicName>ft_sensor_topic</topicName>
+            <jointName>jnt6_rev</jointName>
         </plugin>
     </gazebo>
+
 </robot>

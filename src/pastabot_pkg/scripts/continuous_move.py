@@ -22,7 +22,7 @@ def random_pose(base_x, base_y, base_z, min_z=0.00):
     min_radius = 0.40
     max_radius = 0.95
     while True:
-        x = base_x + random.uniform(0.85, max_radius)
+        x = base_x + random.uniform(0.35, max_radius)
         y = base_y + random.uniform(-0.40, 0.40)
         z = base_z + random.uniform(min_z, 0.1)  # z è sempre >= min_z
 
