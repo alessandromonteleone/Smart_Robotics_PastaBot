@@ -79,20 +79,17 @@
       <static>1</static>
     </model>
 
-
     <include>
       <name>table1</name>
-      <uri>model://Table</uri>
-      
+      <uri>model://Table</uri>      
       <pose>0.750000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
     </include>
 
-    <include>
+    <!-- <include>
       <name>table2</name>
       <uri>model://Table</uri>
       <pose>-0.80 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
-    </include>
-
+    </include> -->
 
     <!-- <include>
       <name>Vans_Cereal_Honey_Nut_Crunch_11_oz_box</name>
@@ -282,7 +279,7 @@
     <include>
       <name>one_disposal_bin</name>
       <uri>model://disposal_bin</uri>
-      <pose>0 0.9 0 0 0 0</pose>
+      <pose>1.05 0.9 0 0 0 0</pose>
     </include>
 
     <include>
@@ -294,7 +291,7 @@
     <include>
       <name>three_disposal_bin</name>
       <uri>model://disposal_bin</uri>
-      <pose>0 -0.9 0 0 0 0</pose>
+      <pose>1.05 -0.9 0 0 0 0</pose>
     </include>
 
     <model name='camera'>
