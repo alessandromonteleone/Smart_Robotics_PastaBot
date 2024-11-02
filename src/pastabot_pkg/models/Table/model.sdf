@@ -14,6 +14,9 @@
             <ode>
               <mu>0.6</mu>
               <mu2>0.6</mu2>
+              <fdir1>0 0 0</fdir1>
+              <slip1>0.01</slip1>
+              <slip2>0.01</slip2>
             </ode>
           </friction>
         </surface>

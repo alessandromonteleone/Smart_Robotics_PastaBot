@@ -10,7 +10,7 @@ from message_filters import ApproximateTimeSynchronizer, Subscriber
 
 ## GLOBAL VARIABLES (Punti rispetto alle coordinate del robot) 
 CURRENT_ROBOT_POSE = [0.20, 0.0, 1.015]
-START_POINT = [0.87, -0.01, 1.025]
+START_POINT = [0.91, -0.01, 1.025]
 END_POINT = [0.93, 0.01, 1.045]
 
 # Variabili globali per memorizzare i valori di forza e coppia
