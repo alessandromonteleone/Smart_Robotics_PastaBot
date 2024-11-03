@@ -98,8 +98,9 @@ class ObjectDetection:
     def __init__(self):
         self.push_point_pub = rospy.Publisher("box/push_point", Point, queue_size=10)
         self.distance_pub = rospy.Publisher("box/push_distance", Float32, queue_size=10)
-        self.side_pub = rospy.Publisher("box/side_point", Point, queue_size=10)
         self.initial_point_pub = rospy.Publisher("box/initial_point", Point, queue_size=10)
+        self.side_pub = rospy.Publisher("box/side_point", Point, queue_size=10)
+        self.dest_pub = rospy.Publisher("box/dest", String, queue_size=10)
 
         self.bridge_object = CvBridge()
 
@@ -151,7 +152,8 @@ class ObjectDetection:
             side_list2d_world = compute_side_point(push_list2d_world, dest, BOX_SIDES)
             side_msg = list2d_to_point(side_list2d_world)
             self.side_pub.publish(side_msg)
-            print(f"ATTENTION: Side point --> {side_list2d_world}")
+            self.dest_pub.publish(dest)
+            print(f"ATTENTION: Side point --> {side_list2d_world}, Dest --> {dest}")
 
     def stop_detector_callback(self, msg: Bool):
         if msg.data:
