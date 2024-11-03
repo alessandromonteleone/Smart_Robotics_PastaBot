@@ -6,7 +6,7 @@ import numpy as np
 import rospy
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Bool
 from geometry_msgs.msg import Point
 import logging
 from compute_final_push_point import distance_to_push_side
@@ -93,6 +93,8 @@ class ObjectDetection:
         self.rgb_threshold = [30, 30, 30]
         self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy')
 
+        self.stop_detector_sub = rospy.Subscriber("force_check/stop_detector", Bool, self.stop_detector_callback)
+
     def start(self):
         self.first = True
         self.is_stopped = False
@@ -108,8 +110,12 @@ class ObjectDetection:
         self.image_sub.unregister()
         print("unregistered from /camera/image_raw")
         self.is_stopped = True
-        cv.destroyAllWindows()
         
+    def stop_detector_callback(self, msg: Bool):
+        if msg.data:
+            print("stopped detector")
+            self.stop()
+
 
     def camera_callback(self, data):
         try:
@@ -240,9 +246,7 @@ class ObjectDetection:
 
             cv.circle(mask_black, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
             cv.circle(cropped_img, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
-        else:
-            print("no  objects detected, stopping...")
-            self.stop()
+        
         # --- Show only the masked parts of the image ---
         #cv.imshow("Box frontal face", mask_black)
         cv.imshow("cropped", cropped_img)
