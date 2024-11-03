@@ -15,6 +15,22 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
+def list2d_to_point(list2d) -> Point:
+    """list2d is a list or a np.array with 2 components"""
+    point_msg = Point()
+    point_msg.x = list2d[0]
+    point_msg.y = list2d[1]
+    point_msg.z = 0.0
+    return point_msg
+
+def imgframe_to_worldframe(img_list2d: list, H: np.array):
+    return (
+        cv.perspectiveTransform(np.array(img_list2d).reshape(1, 1, 2), H)
+        .reshape(2)
+        .tolist()
+    )
+
+
 def draw_line_with_points(image, start_point, end_point, side_point, distance):
     
     # Disegna i cerchi per i punti di inizio e fine
@@ -66,6 +82,7 @@ class ObjectDetection:
         self.push_point_pub = rospy.Publisher("box/push_point", Point, queue_size=10)
         self.distance_pub = rospy.Publisher("box/push_distance", Float32, queue_size=10)
         self.side_pub = rospy.Publisher("box/side_point", Point, queue_size=10)
+        self.initial_point_pub = rospy.Publisher("box/initial_point", Point, queue_size=10)
 
         self.bridge_object = CvBridge()
 
@@ -91,6 +108,7 @@ class ObjectDetection:
         self.image_sub.unregister()
         print("unregistered from /camera/image_raw")
         self.is_stopped = True
+        cv.destroyAllWindows()
         
 
     def camera_callback(self, data):
@@ -109,52 +127,10 @@ class ObjectDetection:
         cropped_img = cv_image[10:789+1, 192:607+1]
         #logger.debug(f"cropped_img.shape: {cropped_img.shape}")
         
-
-        """
-        # Convert the image to grayscale
-        gray = cv.cvtColor(cropped_img, cv.COLOR_BGR2GRAY)
-        #cv.imshow("gray", gray)
-
-        mask = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV, 3, 3)
-        #cv.imshow("mask", mask)
-
-        # Find contours
-        contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-        logger.info("contours: ", contours)
-
-        for cnt in contours:
-            cv.polylines(cropped_img, [cnt], True, [255, 0, 0], 1)
-
-        object_detected = []
-
-        for cnt in contours:
-            area = cv.contourArea(cnt)
-            if area > 10 and area < 5000:
-                cnt = cv.approxPolyDP(cnt, 0.03 * cv.arcLength(cnt, True), True)
-                object_detected.append(cnt)
-                logger.debug(f'area-->>> {area}')
-
-        print("how many object I detect: ", len(object_detected))
-        print(object_detected)
-
-        for cnt in object_detected:
-            rect = cv.minAreaRect(cnt)
-            (x_center, y_center), (w,h), orientation = rect
-            box = cv.boxPoints(rect)
-            box = np.int0(box)
-            cv.polylines(cropped_img, [box], True, (255, 0, 0), 1)
-            cv.putText(cropped_img, "x: {}".format(round(x_center, 1)) + " y: {}".format(round(y_center, 1)), 
-                       (int(x_center), int(y_center)), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0), 1)
-            cv.circle(cropped_img, (int(x_center), int(y_center)), 1, (255, 0, 0), thickness=-1)
-
-        """
-
         # --- Mask creation ---
         threshold_black = np.array(self.rgb_threshold).reshape(1,1,3)
 
         # Mask for almost black pixels
-        print('----', cropped_img.shape)
-
         mask_black = ((cropped_img <= threshold_black)* 255).astype(np.uint8)
         mask_black = np.prod(mask_black, axis=-1, keepdims=True, dtype=np.uint8)
         mask_black = np.concatenate([mask_black, mask_black, mask_black], axis=-1)
@@ -208,6 +184,10 @@ class ObjectDetection:
             
             if self.start_end_points['start'] is None:
                 self.start_end_points['start'] = self.push_point
+                # homography and publish
+                real_list2d = imgframe_to_worldframe(self.start_end_points['start'], self.homography_matrix)
+                msg = list2d_to_point(real_list2d)
+                self.initial_point_pub.publish(msg)
 
             elif (abs(prev_push_point[1]-self.push_point[1]) < self.pixel_tollerence 
                   and abs(self.start_end_points['start'][1]-self.push_point[1])> 5 
