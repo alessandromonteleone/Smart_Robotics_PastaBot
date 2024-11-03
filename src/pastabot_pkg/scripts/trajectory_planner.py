@@ -11,10 +11,9 @@ from position_manager import PositionManager
 
 
 ## GLOBAL VARIABLES
-START_POINT = [0.70, 0.0, 1.035]
-STOP_POINT = [0.95, 0.0, 1.035]
-HOME = [0.20, -0.40, 1.035]
-last_clock_time = None 
+HOME_POINT = [0.20, -0.40, 1.035]
+START_POINT_OFFSET = [-0.21, 0.0, 1.035]
+STOP_POINT_OFFEST = [0.04, 0.0, 1.035]
 
 
 ## PARAMETERS
@@ -30,34 +29,16 @@ def reading_parameters():
 
 
 ## POINTS
-def points(current_robot_pose):
+def point(current_point, current_robot_pose):
     # Fixed orientation in quaternions
     vertical_quaternion = tf.quaternion_from_euler(math.radians(0.0), math.radians(180.0), math.radians(0.0))  # Roll, Pitch and Yaw
+    point_pose = Pose()
+    point_pose.position.x = current_point[0] - current_robot_pose[0]
+    point_pose.position.y = current_point[1] - current_robot_pose[1]
+    point_pose.position.z = current_point[2] - current_robot_pose[2]
+    point_pose.orientation.x, point_pose.orientation.y, point_pose.orientation.z, point_pose.orientation.w = vertical_quaternion
 
-    # HOME POINT
-    home_pose = Pose()
-    home_pose.position.x = HOME[0] - current_robot_pose[0]
-    home_pose.position.y = HOME[1] - current_robot_pose[1]
-    home_pose.position.z = HOME[2] - current_robot_pose[2]
-    home_pose.orientation.x, home_pose.orientation.y, home_pose.orientation.z, home_pose.orientation.w = vertical_quaternion
-
-    # START WEIGHT CHECK POINT
-    start_weight_check_pose = Pose()
-    start_weight_check_pose.position.x = START_POINT[0] - current_robot_pose[0]
-    start_weight_check_pose.position.y = START_POINT[1] - current_robot_pose[1]
-    start_weight_check_pose.position.z = START_POINT[2] - current_robot_pose[2]
-    start_weight_check_pose.orientation.x, start_weight_check_pose.orientation.y, start_weight_check_pose.orientation.z, start_weight_check_pose.orientation.w = vertical_quaternion
-
-    # STOP WEIGHT CHECK POINT
-    '''
-    stop_weight_check_pose = Pose()
-    stop_weight_check_pose.position.x = STOP_POINT[0] - current_robot_pose[0]
-    stop_weight_check_pose.position.y = STOP_POINT[1] - current_robot_pose[1]
-    stop_weight_check_pose.position.z = STOP_POINT[2] - current_robot_pose[2]
-    stop_weight_check_pose.orientation.x, stop_weight_check_pose.orientation.y, stop_weight_check_pose.orientation.z, stop_weight_check_pose.orientation.w = vertical_quaternion
-    '''
-    
-    return home_pose, start_weight_check_pose
+    return point_pose
 
 
 ## PLANS
@@ -93,7 +74,7 @@ def weight_check_plan(robot, waypoints=[]):
 def robot_move():
     # ROS, MoveIt and PlanningSceneInterface initialization
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_gofa_robot', anonymous=True)
+    rospy.init_node('trajectory_planner', anonymous=True)
     rospy.loginfo("Waiting for MoveIt and necessary topics activation")
     rospy.wait_for_message('/joint_states', JointState)
     robot_arm = moveit_commander.MoveGroupCommander("gofa_group")
@@ -107,8 +88,7 @@ def robot_move():
     rospy.loginfo("Continuous Move Initialization completed")
 
     # Reading Robot Base 6D Pose
-    # home_pose, start_weight_check_pose, stop_weight_check_pose = points(current_robot_pose=reading_parameters())
-    home_pose, start_weight_check_pose = points(current_robot_pose=[0.20, 0.0, 1.015])
+    home_pose = point(current_point=HOME_POINT, current_robot_pose=reading_parameters())
 
     # HOME PLAN Definition & Execution
     home_plan(robot=robot_arm, pose=home_pose)    
@@ -118,14 +98,18 @@ def robot_move():
 
         # Waiting for WEIGHT CHECK PUSH POINT
         push_point = position_manager.wait_for_initial_push_point()
-        position_manager.initial_push_point = None
-        vertical_quaternion = tf.quaternion_from_euler(math.radians(0.0), math.radians(180.0), math.radians(0.0))  # Roll, Pitch and Yaw
-        stop_weight_check_pose = Pose()
-        stop_weight_check_pose.position.x = round(push_point.x, 3) - 0.20 + 0.04  # Removing Robot Offset and adding Object Center on X-axis
-        stop_weight_check_pose.position.y = round(push_point.y, 3) - 0.0
-        stop_weight_check_pose.position.z = round(push_point.z, 3) + 0.02
-        stop_weight_check_pose.orientation.x, stop_weight_check_pose.orientation.y, stop_weight_check_pose.orientation.z, stop_weight_check_pose.orientation.w = vertical_quaternion
-        rospy.loginfo(f"PUSH POINT: {stop_weight_check_pose.position}")
+        start_weight_check_pose = point(
+            current_point=[round(push_point.x, 3) + START_POINT_OFFSET[0], 
+                           round(push_point.y, 3) + START_POINT_OFFSET[1], 
+                           round(push_point.z, 3) + START_POINT_OFFSET[2]], 
+            current_robot_pose=reading_parameters())
+        stop_weight_check_pose = point(
+            current_point=[round(push_point.x, 3) + STOP_POINT_OFFEST[0], 
+                           round(push_point.y, 3) + STOP_POINT_OFFEST[1], 
+                           round(push_point.z, 3) + STOP_POINT_OFFEST[2]],
+            current_robot_pose=reading_parameters())
+        rospy.loginfo(f"START PUSH POINT: {stop_weight_check_pose.position}")
+        rospy.loginfo(f"STOP PUSH POINT: {stop_weight_check_pose.position}")
 
         # WEIGHT CHECK PLAN Definition & Execution
         weight_push_plan = weight_check_plan(robot=robot_arm, waypoints=[home_pose, start_weight_check_pose, stop_weight_check_pose])
@@ -140,9 +124,9 @@ def robot_move():
         home_plan(robot=robot_arm, pose=home_pose)
 
         # Resetting Position Manager at the end of each iteration
-        # position_manager.reset()        
+        position_manager.reset()        
 
-    # Shutdown MoveIt
+    # Shutdown
     moveit_commander.roscpp_shutdown()
 
 
