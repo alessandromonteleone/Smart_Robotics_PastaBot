@@ -5,13 +5,16 @@ import math
 import time
 from moveit_commander import MoveGroupCommander, roscpp_initialize, roscpp_shutdown
 from geometry_msgs.msg import PoseStamped, WrenchStamped
-from message_filters import ApproximateTimeSynchronizer, Subscriber
 
 
 ## GLOBAL VARIABLES (Punti rispetto alle coordinate del robot) 
 CURRENT_ROBOT_POSE = [0.20, 0.0, 1.015]
 START_POINT = [0.91, -0.01, 1.025]
 END_POINT = [0.93, 0.01, 1.045]
+THRESHOLD_EMPTY_LIGHT = 0.2
+THRESHOLD_LIGHT_MEDIUM = 2.0
+THRESHOLD_MEDIUM_MAX = 4.0
+
 
 # Variabili globali per memorizzare i valori di forza e coppia
 current_force = None
@@ -81,11 +84,11 @@ def print_force_and_torque_in_region():
                 # Classification
                 if average_top_5_force < 0.2:
                     rospy.loginfo(f"--> Empty Table")
-                elif 0.2 <= average_top_5_force < 2.0:
+                elif THRESHOLD_EMPTY_LIGHT <= average_top_5_force < THRESHOLD_LIGHT_MEDIUM:
                     rospy.loginfo(f"--> Selected LIGHT BOX")
-                elif 2.0 <= average_top_5_force < 4.0:
+                elif THRESHOLD_LIGHT_MEDIUM <= average_top_5_force < THRESHOLD_MEDIUM_MAX:
                     rospy.loginfo(f"--> Selected MEDIUM BOX")
-                elif 4.0 <= average_top_5_force:
+                elif THRESHOLD_MEDIUM_MAX <= average_top_5_force:
                     rospy.loginfo(f"--> Selected HEAVY BOX")
 
                 # Reset lists after calculations

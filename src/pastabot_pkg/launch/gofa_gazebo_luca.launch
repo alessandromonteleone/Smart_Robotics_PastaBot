@@ -97,13 +97,13 @@
     
     <!-- SCRIPTS -->
     <!-- Execute the Python script to control the robot -->
-    <node name="move_gofa_robot" pkg="pastabot_pkg" type="trajectory_move.py" args="-d $(find pastabot_pkg)/scripts/trajectory_move.py" output="screen">       
+    <!-- <node name="move_gofa_robot" pkg="pastabot_pkg" type="trajectory_move.py" args="-d $(find pastabot_pkg)/scripts/trajectory_move.py" output="screen">       
         <param name="arg_x" value="$(arg arg_x)" />
         <param name="arg_y" value="$(arg arg_y)" />
         <param name="arg_z" value="$(arg arg_z)" />
         <param name="arg_Roll" value="$(arg arg_Roll)" />
         <param name="arg_Pitch" value="$(arg arg_Pitch)" />
         <param name="arg_Yaw" value="$(arg arg_Yaw)" />
-    </node>
+    </node> -->
     
 </launch>

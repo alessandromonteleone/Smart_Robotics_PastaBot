@@ -7,6 +7,7 @@ from geometry_msgs.msg import Pose
 import tf.transformations as tf
 import math
 from sensor_msgs.msg import JointState
+from position_manager import PositionManager
 
 
 ## GLOBAL VARIABLES
@@ -48,13 +49,15 @@ def points(current_robot_pose):
     start_weight_check_pose.orientation.x, start_weight_check_pose.orientation.y, start_weight_check_pose.orientation.z, start_weight_check_pose.orientation.w = vertical_quaternion
 
     # STOP WEIGHT CHECK POINT
+    '''
     stop_weight_check_pose = Pose()
     stop_weight_check_pose.position.x = STOP_POINT[0] - current_robot_pose[0]
     stop_weight_check_pose.position.y = STOP_POINT[1] - current_robot_pose[1]
     stop_weight_check_pose.position.z = STOP_POINT[2] - current_robot_pose[2]
     stop_weight_check_pose.orientation.x, stop_weight_check_pose.orientation.y, stop_weight_check_pose.orientation.z, stop_weight_check_pose.orientation.w = vertical_quaternion
-
-    return home_pose, start_weight_check_pose, stop_weight_check_pose
+    '''
+    
+    return home_pose, start_weight_check_pose
 
 
 ## PLANS
@@ -62,14 +65,14 @@ def home_plan(robot, pose):
     robot.set_pose_target(pose)
     home_plan = robot.plan()
     if home_plan:
-        rospy.logwarn(f"STARTING PLAN: moving plan towards position ({pose.position.x:.2f}, {pose.position.y:.2f}, {pose.position.z:.2f}) generated successfully")
+        rospy.logwarn(f"HOME PLAN: moving plan towards position ({pose.position.x:.2f}, {pose.position.y:.2f}, {pose.position.z:.2f}) generated successfully")
         if robot.go(wait=True):
-            rospy.logwarn("STARTING PLAN: movement done successfully")
+            rospy.logwarn("HOME PLAN: movement done successfully")
             # continue
         else:
-            rospy.logerr("STARTING PLAN: movement failed")
+            rospy.logerr("HOME PLAN: movement failed")
     else:
-        rospy.logerr("STARTING PLAN: moving plan failed")
+        rospy.logerr("HOME PLAN: moving plan failed")
     robot.stop()
     robot.clear_pose_targets()
 
@@ -98,23 +101,34 @@ def robot_move():
     robot_arm.set_max_velocity_scaling_factor(1.0)
     robot_arm.set_max_acceleration_scaling_factor(1.0)
     planning_scene = moveit_commander.PlanningSceneInterface()
+    position_manager = PositionManager()                            # Instancing Postion Manager
     rospy.loginfo(f"Waiting for service {planning_scene}...")
     rospy.sleep(1)
     rospy.loginfo("Continuous Move Initialization completed")
 
     # Reading Robot Base 6D Pose
-    home_pose, start_weight_check_pose, stop_weight_check_pose = points(current_robot_pose=reading_parameters())
+    # home_pose, start_weight_check_pose, stop_weight_check_pose = points(current_robot_pose=reading_parameters())
+    home_pose, start_weight_check_pose = points(current_robot_pose=[0.20, 0.0, 1.015])
 
-    # HOME PLAN Definition and Execution
+    # HOME PLAN Definition & Execution
     home_plan(robot=robot_arm, pose=home_pose)    
-
-    # WEIGHT CHECK PLAN Definition
-    weight_push_plan = weight_check_plan(robot=robot_arm, waypoints=[home_pose, start_weight_check_pose, stop_weight_check_pose])
 
     # CYCLE
     while not rospy.is_shutdown():       
 
-        # WEIGHT CHECK PLAN Execution
+        # Waiting for WEIGHT CHECK PUSH POINT
+        push_point = position_manager.wait_for_initial_push_point()
+        position_manager.initial_push_point = None
+        vertical_quaternion = tf.quaternion_from_euler(math.radians(0.0), math.radians(180.0), math.radians(0.0))  # Roll, Pitch and Yaw
+        stop_weight_check_pose = Pose()
+        stop_weight_check_pose.position.x = round(push_point.x, 3) - 0.20 + 0.04  # Removing Robot Offset and adding Object Center on X-axis
+        stop_weight_check_pose.position.y = round(push_point.y, 3) - 0.0
+        stop_weight_check_pose.position.z = round(push_point.z, 3) + 0.02
+        stop_weight_check_pose.orientation.x, stop_weight_check_pose.orientation.y, stop_weight_check_pose.orientation.z, stop_weight_check_pose.orientation.w = vertical_quaternion
+        rospy.loginfo(f"PUSH POINT: {stop_weight_check_pose.position}")
+
+        # WEIGHT CHECK PLAN Definition & Execution
+        weight_push_plan = weight_check_plan(robot=robot_arm, waypoints=[home_pose, start_weight_check_pose, stop_weight_check_pose])
         if robot_arm.execute(weight_push_plan, wait=True):
             rospy.loginfo("WEIGHT CHECK PLAN: trajectory execution completed successfully")
         else:
@@ -122,10 +136,11 @@ def robot_move():
         robot_arm.stop()
         robot_arm.clear_pose_targets()
         
-        # HOME PLAN Definition and Execution
-        home_plan(robot=robot_arm, pose=home_pose)     
+        # HOME PLAN Definition & Execution
+        home_plan(robot=robot_arm, pose=home_pose)
 
-        rospy.sleep(15)
+        # Resetting Position Manager at the end of each iteration
+        # position_manager.reset()        
 
     # Shutdown MoveIt
     moveit_commander.roscpp_shutdown()
