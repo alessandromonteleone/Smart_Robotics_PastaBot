@@ -4,12 +4,12 @@ import rospy
 from geometry_msgs.msg import Point
 from time import sleep
 
+
+## CLASS
 class PositionManager:
     def __init__(self):
-        rospy.init_node("position_manager", anonymous=True)
         self.push_point_sub = rospy.Subscriber("box/push_point", Point, self.push_point_callback)
         self.side_point_sub = rospy.Subscriber("box/side_point", Point, self.side_point_callback)
-
         self.initial_push_point = None
         self.current_push_point = None
         self.side_point = None
@@ -44,11 +44,10 @@ class PositionManager:
     def get_current_push_point(self):
         return self.current_push_point
 
-    # def run(self):
-    #     rospy.spin()
 
-
+## MAIN
 if __name__ == "__main__":
+    rospy.init_node("position_manager", anonymous=True)
     position_manager = PositionManager()
     initial_push_point = position_manager.wait_for_initial_push_point()
     rospy.loginfo(f"received {initial_push_point=}")
