@@ -8,11 +8,11 @@ from time import sleep
 ## CLASS
 class PositionManager:
     def __init__(self):
+        self.initial_point_sub = rospy.Subscriber("box/initial_point", Point, self.initial_point_callback)
         self.push_point_sub = rospy.Subscriber("box/push_point", Point, self.push_point_callback)
         self.side_point_sub = rospy.Subscriber("box/side_point", Point, self.side_point_callback)
-        self.initial_push_point = None
-        self.current_push_point = None
-        self.side_point = None
+
+        self.reset()
 
     def reset(self):
         self.initial_push_point = None
@@ -20,10 +20,10 @@ class PositionManager:
         self.side_point = None
 
     def push_point_callback(self, msg):
-        if self.initial_push_point is None:
-            self.initial_push_point = msg
-            rospy.loginfo(f"Initial push point saved: x={msg.x}, y={msg.y}, z={msg.z}")
         self.current_push_point = msg
+
+    def initial_point_callback(self, msg):
+        self.initial_push_point = msg
 
     def side_point_callback(self, msg):
         self.side_point = msg
@@ -45,11 +45,14 @@ class PositionManager:
         return self.current_push_point
 
 
-## MAIN
 if __name__ == "__main__":
     rospy.init_node("position_manager", anonymous=True)
     position_manager = PositionManager()
-    initial_push_point = position_manager.wait_for_initial_push_point()
-    rospy.loginfo(f"received {initial_push_point=}")
-    side_point = position_manager.wait_for_side_point()
-    rospy.loginfo(f"received {side_point=}")
+
+    while not rospy.is_shutdown():
+        initial_push_point = position_manager.wait_for_initial_push_point()
+        rospy.loginfo(f"received {initial_push_point=}")
+        side_point = position_manager.wait_for_side_point()
+        rospy.loginfo(f"received {side_point=}")
+        
+        position_manager.reset() # TODO: call after the box goes in the bin
