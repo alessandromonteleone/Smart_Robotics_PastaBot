@@ -4,16 +4,16 @@
     <link name='box_01_body'>
       <pose>0 0 0 0 -0 0</pose>
       <inertial>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <inertia>
-          <ixx>0.00270833</ixx>
+          <ixx>0.00081250</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00240833</iyy>
+          <iyy>0.00072250</iyy>
           <iyz>0</iyz>
-          <izz>0,00136667</izz>
+          <izz>0.00041000</izz>
         </inertia>
-        <mass>1</mass>
+        <mass>0.3</mass>
       </inertial>
       <gravity>1</gravity>
       <self_collide>0</self_collide>

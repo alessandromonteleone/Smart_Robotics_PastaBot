@@ -6,14 +6,14 @@
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <inertia>
-          <ixx>0.00541667</ixx>
+          <ixx>0.00677083</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00481667</iyy>
+          <iyy>0.00602083</iyy>
           <iyz>0</iyz>
-          <izz>0.00273333</izz>
+          <izz>0.00341667</izz>
         </inertia>
-        <mass>2.0</mass>
+        <mass>2.5</mass>
       </inertial>
       <gravity>1</gravity>
       <self_collide>0</self_collide>
@@ -58,9 +58,6 @@
               <slip1>0.02</slip1>
               <slip2>0.02</slip2>
             </ode>
-            <bullet>
-              <friction>0.5</friction>
-            </bullet>
             <torsional>
               <coefficient>1</coefficient>
               <patch_radius>0</patch_radius>

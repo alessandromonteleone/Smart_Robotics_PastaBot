@@ -78,6 +78,16 @@ def print_force_and_torque_in_region():
                 else:
                     rospy.loginfo("Not enough torque measurements for Top 5 average")
 
+                # Classification
+                if average_top_5_force < 0.2:
+                    rospy.loginfo(f"--> Empty Table")
+                elif 0.2 <= average_top_5_force < 2.0:
+                    rospy.loginfo(f"--> Selected LIGHT BOX")
+                elif 2.0 <= average_top_5_force < 4.0:
+                    rospy.loginfo(f"--> Selected MEDIUM BOX")
+                elif 4.0 <= average_top_5_force:
+                    rospy.loginfo(f"--> Selected HEAVY BOX")
+
                 # Reset lists after calculations
                 average_force.clear()
                 average_torque.clear()
