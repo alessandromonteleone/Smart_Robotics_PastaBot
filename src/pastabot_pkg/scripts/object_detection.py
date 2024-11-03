@@ -6,14 +6,31 @@ import numpy as np
 import rospy
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-from std_msgs.msg import Float32, Bool
+from std_msgs.msg import Float32, Bool, String
 from geometry_msgs.msg import Point
 import logging
-from compute_final_push_point import distance_to_push_side
+
+
+BOX_SIDES = [0.08, 0.1]
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+
+def compute_side_point(push_point: list, dest: str, side_lengths: list):
+    """
+    push_point: middle point of bottom side in real-wold coords
+    """
+    x, y = push_point
+    side_x, side_y = side_lengths
+
+    if dest == "left":
+        return (x + side_x/2, y + side_y/2)
+    elif dest == "right":
+        return (x + side_x/2, y - side_y/2)
+    else:
+        return push_point
 
 def list2d_to_point(list2d) -> Point:
     """list2d is a list or a np.array with 2 components"""
@@ -88,12 +105,19 @@ class ObjectDetection:
 
         self.threshold_wait = 10
         
-        self.pixel_tollerence = 3
+        self.pixel_tolerance = 3
         self.area_threshold = 10
         self.rgb_threshold = [30, 30, 30]
-        self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy')
+        self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy') # TODO: change when in roslaunch
 
         self.stop_detector_sub = rospy.Subscriber("force_check/stop_detector", Bool, self.stop_detector_callback)
+        self.box_type_sub = rospy.Subscriber("box/type_topic", String, self.box_type_callback)
+        self.type2dest_mapping = {
+            "No Object": "front",  # HACK
+            "LIGHT BOX": "front",
+            "MEDIUM BOX": "right",
+            "HEAVY BOX": "left",
+        }
 
     def start(self):
         self.first = True
@@ -110,7 +134,25 @@ class ObjectDetection:
         self.image_sub.unregister()
         print("unregistered from /camera/image_raw")
         self.is_stopped = True
-        
+
+    def box_type_callback(self, msg):
+        box_type = msg.data
+        assert box_type in self.type2dest_mapping, f"ERROR, {box_type} not in {self.type2dest_mapping.keys()}"
+
+        if self.push_point is None:
+            rospy.logwarn("box type message received, but push_point is None!")
+            return
+       
+        if box_type == "No Object":
+            self.stop() # Stops Detector when box falls over the table
+        else:
+            dest = self.type2dest_mapping[box_type]
+            push_list2d_world = imgframe_to_worldframe(self.push_point, self.homography_matrix)
+            side_list2d_world = compute_side_point(push_list2d_world, dest, BOX_SIDES)
+            side_msg = list2d_to_point(side_list2d_world)
+            self.side_pub.publish(side_msg)
+            print(f"ATTENTION: Side point --> {side_list2d_world}")
+
     def stop_detector_callback(self, msg: Bool):
         if msg.data:
             print("stopped detector")
@@ -195,7 +237,7 @@ class ObjectDetection:
                 msg = list2d_to_point(real_list2d)
                 self.initial_point_pub.publish(msg)
 
-            elif (abs(prev_push_point[1]-self.push_point[1]) < self.pixel_tollerence 
+            elif (abs(prev_push_point[1]-self.push_point[1]) < self.pixel_tolerance 
                   and abs(self.start_end_points['start'][1]-self.push_point[1])> 5 
                   and self.counter_position <= self.threshold_wait):
                 self.counter_position+=1
@@ -221,21 +263,10 @@ class ObjectDetection:
                     # Pubblica la distanza
                     self.distance_pub.publish(distance_norm)
 
-                    side_point = distance_to_push_side(
-                        push_point=real_push_point,
-                        side_lengths=[0.2, 0.2],
-                        distance=distance_norm
-                    )
-                    side_msg = Point()
-                    side_msg.x = side_point[0]
-                    side_msg.y = side_point[1]
-                    side_msg.z = 0.0
-                    self.side_pub.publish(side_msg)
-                    print(f"ATTENTION: Side point --> {side_point}")
 
-                print("Pixel distance: ", abs(distance))
-                print(f"Real distance: {real_distance}")
-                print(f"Distanza in norma:{distance_norm} ")
+                # print("Pixel distance: ", abs(distance))
+                # print(f"Real distance: {real_distance}")
+                # print(f"Distanza in norma:{distance_norm} ")
                 #print(f"Matrice {self.homography_matrix}")
 
                 draw_line_with_points(image=cropped_img, 

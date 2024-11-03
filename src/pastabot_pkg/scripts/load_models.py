@@ -131,8 +131,8 @@ def main():
             rospy.sleep(2)  # Attendi che il box venga spawnato
             detector.start()
             
-    except rospy.ROSInterruptException:
-        pass
+    except rospy.ROSInterruptException as e:
+        print(e)
 
 
 '''

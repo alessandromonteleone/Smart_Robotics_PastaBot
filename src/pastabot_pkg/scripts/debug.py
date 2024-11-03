@@ -1,14 +1,21 @@
 import rospy
-from std_msgs.msg import Bool 
+from std_msgs.msg import Bool, String 
 
 rospy.init_node("debug", anonymous=True)
-pub = rospy.Publisher("force_check/stop_detector", Bool, queue_size=10)
+pub = rospy.Publisher("box/type_topic", String, queue_size=10)
 
 # Attendi un breve tempo per permettere al publisher di inizializzarsi
 rospy.sleep(0.5)
 
+"""
+No Object 
+LIGHT BOX
+MEDIUM BOX
+HEAVY BOX
+"""
+
 # Ora pubblica il messaggio
-pub.publish(True)
+pub.publish("HEAVY BOX")
 
 # Aggiungi un log di conferma
-rospy.loginfo("Messaggio pubblicato su 'force_check/stop_detector'")
+rospy.loginfo("Messaggio pubblicato")
