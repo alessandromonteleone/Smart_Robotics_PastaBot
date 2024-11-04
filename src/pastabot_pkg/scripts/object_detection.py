@@ -24,13 +24,14 @@ def compute_side_point(push_point: list, dest: str, side_lengths: list):
     """
     x, y = push_point
     side_x, side_y = side_lengths
+    x += side_x/2
 
     if dest == "left":
-        return (x + side_x/2, y + side_y/2)
+        return (x, y + side_y/2)
     elif dest == "right":
-        return (x + side_x/2, y - side_y/2)
+        return (x, y - side_y/2)
     else:
-        return push_point
+        return x, y
 
 def list2d_to_point(list2d) -> Point:
     """list2d is a list or a np.array with 2 components"""
@@ -123,9 +124,9 @@ class ObjectDetection:
     def start(self):
         self.first = True
         self.is_stopped = False
+        self.start_end_points = {'start':None, 'end':None}
         self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.camera_callback)
         #self.bridge_object = CvBridge()
-        self.start_end_points = {'start':None, 'end':None}
         self.counter_position = 0
         self.push_point = None
         while not self.is_stopped:

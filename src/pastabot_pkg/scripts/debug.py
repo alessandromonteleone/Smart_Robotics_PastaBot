@@ -15,7 +15,7 @@ HEAVY BOX
 """
 
 # Ora pubblica il messaggio
-pub.publish("HEAVY BOX")
+pub.publish("LIGHT BOX")
 
 # Aggiungi un log di conferma
 rospy.loginfo("Messaggio pubblicato")
