@@ -7,7 +7,7 @@
     <arg name="paused" default="false" doc="Start Gazebo paused"/>                                                  <!-- Gazebo Simulation paused -->
     <arg name="world_name" default="$(find pastabot_pkg)/worlds/pasta.world" doc="Gazebo world file"/>              <!-- World name -->
     <arg name="world_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>               <!-- World Pose -->
-    <arg name="arg_x" default="0.20"/>                                                                              <!-- X coordinate for Base Link -->
+    <arg name="arg_x" default="0.45"/>                                                                              <!-- X coordinate for Base Link -->
     <arg name="arg_y" default="0.00"/>                                                                              <!-- Y coordinate for Base Link -->
     <arg name="arg_z" default="1.015"/>                                                                             <!-- Z coordinate for Base Link -->
     <arg name="arg_Roll" default="0.00"/>                                                                           <!-- Roll for Base Link -->

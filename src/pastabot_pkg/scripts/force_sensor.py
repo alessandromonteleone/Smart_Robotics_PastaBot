@@ -102,13 +102,18 @@ def print_force_and_torque_in_region():
                     box_type = "Empty Table"
                 elif THRESHOLD_EMPTY_LIGHT <= average_top_5_force < THRESHOLD_LIGHT_MEDIUM:
                     box_type = "LIGHT BOX"
+                    box_type_publisher.publish(box_type)
+                    rospy.loginfo(f"Published box type: {box_type}")
                 elif THRESHOLD_LIGHT_MEDIUM <= average_top_5_force < THRESHOLD_MEDIUM_MAX:
                     box_type = "MEDIUM BOX"
+                    box_type_publisher.publish(box_type)
+                    rospy.loginfo(f"Published box type: {box_type}")
                 else:
                     box_type = "HEAVY BOX"
-                box_type_publisher.publish(box_type)
+                    box_type_publisher.publish(box_type)
+                    rospy.loginfo(f"Published box type: {box_type}")
                 box_type_and_inertia_publisher.publish(f"Box type: {box_type}; Inertia: {round(average_top_5_force, 3)} N")
-                rospy.loginfo(f"Published box type: {box_type}")
+
             else:
                 rospy.loginfo("Not enough force measurements for Top 5 average")
 
