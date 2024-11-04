@@ -55,8 +55,8 @@
               <mu>0.4</mu>
               <mu2>0.4</mu2>
               <fdir1>0 0 0</fdir1>
-              <slip1>0.01</slip1>
-              <slip2>0.01</slip2>
+              <slip1>0.005</slip1>
+              <slip2>0.005</slip2>
             </ode>
             <torsional>
               <coefficient>1</coefficient>

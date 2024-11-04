@@ -11,35 +11,35 @@ from geometry_msgs.msg import Point
 import logging
 
 
+## GLOBAL VARIABLES
 BOX_SIDES = [0.08, 0.1]
-
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
+## FUNCTIONS
 def compute_side_point(push_point: list, dest: str, side_lengths: list):
-    """
-    push_point: middle point of bottom side in real-wold coords
-    """
+    # PUSH POINT: middle point of bottom side in real-world coords
     x, y = push_point
     side_x, side_y = side_lengths
     x += side_x/2
 
     if dest == "left":
-        return (x, y + side_y/2)
+        return (x + side_x/2 + 0.025, y + side_y/2 + 0.025)
     elif dest == "right":
-        return (x, y - side_y/2)
+        return (x + side_x/2 + 0.025, y - side_y/2 - 0.025)
     else:
         return x, y
 
+
 def list2d_to_point(list2d) -> Point:
-    """list2d is a list or a np.array with 2 components"""
+    # 'list2d' is a list or a np.array with 2 components
     point_msg = Point()
     point_msg.x = list2d[0]
     point_msg.y = list2d[1]
     point_msg.z = 0.0
     return point_msg
+
 
 def imgframe_to_worldframe(img_list2d: list, H: np.array):
     return (
@@ -50,14 +50,12 @@ def imgframe_to_worldframe(img_list2d: list, H: np.array):
 
 
 def draw_line_with_points(image, start_point, end_point, side_point, distance):
-    
-    # Disegna i cerchi per i punti di inizio e fine
+    # Draw circles for START and END points
     cv.circle(image, (int(start_point[0]), int(start_point[1])), 5, (0, 0, 255), thickness=-1)
     cv.circle(image, (int(end_point[0]), int(end_point[1])), 5, (0, 255, 0), thickness=-1)
     
     if side_point:
         cv.circle(image, (int(side_point[0]), int(side_point[1])), 5, (255, 150, 75), thickness=-1)
-
 
     cv.line(image, 
              (int(start_point[0]), int(start_point[1])), 
@@ -80,9 +78,9 @@ def draw_line_with_points(image, start_point, end_point, side_point, distance):
             'end_point', 
             (int(end_point[0])+10, int(end_point[1])),
             cv.FONT_HERSHEY_SIMPLEX, 
-            0.7,  # Dimensione del font
+            0.7,  # Font dimension
             (0, 255, 0),  
-            1)  # Spessore del font
+            1)    # Font width
 
     cv.putText(image, 
                distance, 
@@ -93,8 +91,8 @@ def draw_line_with_points(image, start_point, end_point, side_point, distance):
                1)
 
 
-#All the coords are in the format: (x,y) w.r.t their reference frame
-#Note that world reference frame is rotated by 90 degres w.r.t camera frame
+# NOTE: All the coords are in the format (x,y) w.r.t their reference frame. Consider that world reference frame is rotated by 90 degres w.r.t camera frame
+## CLASS
 class ObjectDetection:
     def __init__(self):
         self.push_point_pub = rospy.Publisher("box/push_point", Point, queue_size=10)
@@ -104,7 +102,6 @@ class ObjectDetection:
         self.dest_pub = rospy.Publisher("box/dest", String, queue_size=10)
 
         self.bridge_object = CvBridge()
-
         self.threshold_wait = 10
         
         self.pixel_tolerance = 3
@@ -146,7 +143,8 @@ class ObjectDetection:
             return
        
         if box_type == "No Object":
-            self.stop() # Stops Detector when box falls over the table
+            # Stops Detector when box falls over the table
+            self.stop() 
         else:
             dest = self.type2dest_mapping[box_type]
             push_list2d_world = imgframe_to_worldframe(self.push_point, self.homography_matrix)
@@ -160,7 +158,6 @@ class ObjectDetection:
         if msg.data:
             print("stopped detector")
             self.stop()
-
 
     def camera_callback(self, data):
         try:
@@ -231,8 +228,6 @@ class ObjectDetection:
                 # Pubblica la posizione
                 self.push_point_pub.publish(point_msg)
             
-
-            
             if self.start_end_points['start'] is None:
                 self.start_end_points['start'] = self.push_point
                 # homography and publish
@@ -251,7 +246,6 @@ class ObjectDetection:
                 #distance along camera y, real x
                 distance = self.start_end_points['end'][1] - self.start_end_points['start'][1]
                 
-                
                 start_point_transformed = cv.perspectiveTransform(
                 np.array(self.start_end_points['start']).reshape(1,1,2), self.homography_matrix).reshape(2)
 
@@ -265,7 +259,6 @@ class ObjectDetection:
                 if self.counter_position == self.threshold_wait:
                     # Pubblica la distanza
                     self.distance_pub.publish(distance_norm)
-
 
                 # print("Pixel distance: ", abs(distance))
                 # print(f"Real distance: {real_distance}")
@@ -281,12 +274,14 @@ class ObjectDetection:
             cv.circle(mask_black, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
             cv.circle(cropped_img, (int(self.push_point[0]), int(self.push_point[1])), 1, (0, 255, 0), thickness=-1)
         
-        # --- Show only the masked parts of the image ---
+        # Show only the masked parts of the image
         #cv.imshow("Box frontal face", mask_black)
         cv.imshow("cropped", cropped_img)
 
         cv.waitKey(1)
 
+
+## MAIN
 if __name__ == '__main__':
     object_detection = ObjectDetection() 
     rospy.init_node('object_detection', anonymous=True)

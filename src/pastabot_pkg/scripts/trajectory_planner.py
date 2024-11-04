@@ -11,8 +11,10 @@ from position_manager import PositionManager
 
 
 ## GLOBAL VARIABLES
-HOME_POINT = [0.45, -0.40, 1.035]
-LIGHT_BOX_DISPOSAL_BIN_POINT = [1.45, 0.0, 1.035]
+HOME_POINT = [0.45, -0.40, 1.060]
+LIGHT_BOX_DISPOSAL_BIN_POINT = [1.54, 0.0, 1.035]
+MEDIUM_BOX_DISPOSAL_BIN_POINT = [1.017, 0.50, 1.035]
+HEAVY_BOX_DISPOSAL_BIN_POINT = [1.017, -0.50, 1.035]
 START_POINT_OFFSET = [-0.16, 0.0, 1.035]
 STOP_POINT_OFFSET = [0.04, 0.0, 1.035]
 EXPECTING_POINT_OFFSET = [-0.11, 0.0, 1.035]
@@ -32,9 +34,12 @@ def reading_parameters():
 
 
 ## POINTS
-def point(current_point, current_robot_pose):
+def point(current_point, current_robot_pose, push_angle=False):
     # Fixed orientation in quaternions
-    vertical_quaternion = tf.quaternion_from_euler(math.radians(0.0), math.radians(180.0), math.radians(0.0))  # Roll, Pitch and Yaw
+    if not push_angle:
+        vertical_quaternion = tf.quaternion_from_euler(math.radians(0.0), math.radians(180.0), math.radians(0.0))  # Roll, Pitch and Yaw
+    else:
+        vertical_quaternion = tf.quaternion_from_euler(math.radians(0.0), math.radians(150.0), math.radians(0.0))  # Roll, Pitch and Yaw
     point_pose = Pose()
     point_pose.position.x = current_point[0] - current_robot_pose[0]
     point_pose.position.y = current_point[1] - current_robot_pose[1]
@@ -62,9 +67,9 @@ def single_point_plan(robot, pose):
 
 
 def muliple_points_plan(robot, waypoints=[]):
-    plan, fraction = robot.compute_cartesian_path(waypoints, eef_step=0.01)
+    plan, fraction = robot.compute_cartesian_path(waypoints, eef_step=0.025)
     if fraction == 1.0:
-        rospy.loginfo("MULTIPLE POINTS PLAN: trajectory planned successfully")
+        rospy.logwarn("MULTIPLE POINTS PLAN: trajectory planned successfully")
     else:
         rospy.logerr(f"MULTIPLE POINTS PLAN: trajectory planning was incomplete (fraction: {fraction*100:.2f}%)")
     robot.stop()
@@ -115,7 +120,7 @@ def robot_move():
         # WEIGHT CHECK PLAN Definition & Execution
         weight_push_plan = muliple_points_plan(robot=robot_arm, waypoints=[home_pose, start_weight_check_pose, stop_weight_check_pose])
         if robot_arm.execute(weight_push_plan, wait=True):
-            rospy.loginfo("WEIGHT CHECK PLAN: trajectory execution completed successfully")
+            rospy.logwarn("WEIGHT CHECK PLAN: trajectory execution completed successfully")
         else:
             rospy.logerr("WEIGHT CHECK PLAN: trajectory execution failed")
         robot_arm.stop()
@@ -129,34 +134,88 @@ def robot_move():
             current_robot_pose=reading_parameters())
         single_point_plan(robot=robot_arm, pose=expecting_side_point_pose)
 
-        # REACHING SIDE POINT PLAN Definition & Execution
+        # REACHING SIDE POINT PLAN Definition
         side_point, side_direction = position_manager.wait_for_side_point_and_dest()
         side_point_pose = point(
             current_point=[round(side_point.x, 3) + SIDE_POINT_OFFSET[0], 
                            round(side_point.y, 3) + SIDE_POINT_OFFSET[1], 
                            round(side_point.z, 3) + SIDE_POINT_OFFSET[2]], 
             current_robot_pose=reading_parameters())
-        if side_direction == "front":  # Light Box
+        
+
+        # REACHING SIDE POINT PLAN Execution - LIGHT BOX
+        if side_direction == "front":
             side_point_plan = muliple_points_plan(robot=robot_arm, waypoints=[expecting_side_point_pose, side_point_pose])
             if robot_arm.execute(side_point_plan, wait=True):
-                rospy.loginfo("SIDE POINT PLAN: trajectory execution completed successfully")
+                rospy.logwarn("SIDE POINT PLAN for LIGHT BOX: trajectory execution completed successfully")
             else:
-                rospy.logerr("SIDE POINT PLAN: trajectory execution failed")
+                rospy.logerr("SIDE POINT PLAN for LIGHT BOX: trajectory execution failed")
             robot_arm.stop()
             robot_arm.clear_pose_targets()
 
-            rospy.logerr(f"SIDE POINT: ({side_point.x}, {side_point.y}, {side_point.z})")
-
-
-
-            light_box_end_pose = point(current_point=LIGHT_BOX_DISPOSAL_BIN_POINT, current_robot_pose=reading_parameters())
+            # Actual path to LIGHT BOX Disposal
+            light_box_end_pose = point(current_point=LIGHT_BOX_DISPOSAL_BIN_POINT, current_robot_pose=reading_parameters(), push_angle=True)
             single_point_plan(robot=robot_arm, pose=light_box_end_pose)
- 
-                    
 
-        # rospy.sleep(10)
 
+        # REACHING SIDE POINT PLAN Execution - MEDIUM BOX
+        elif side_direction == "right":
+            intermediate_pose = point(
+            current_point=[round(push_point.x, 3) + EXPECTING_POINT_OFFSET[0] + round((side_point.x - push_point.x - EXPECTING_POINT_OFFSET[0]) / 2, 3), 
+                           round(push_point.y, 3) + EXPECTING_POINT_OFFSET[1] + round(side_point.y * 3, 3), 
+                           round(push_point.z, 3) + EXPECTING_POINT_OFFSET[2]], 
+            current_robot_pose=reading_parameters())
+            side_point_plan = muliple_points_plan(robot=robot_arm, waypoints=[expecting_side_point_pose, intermediate_pose, side_point_pose])
+            if robot_arm.execute(side_point_plan, wait=True):
+                rospy.logwarn("SIDE POINT PLAN for MEDIUM BOX: trajectory execution completed successfully")
+            else:
+                rospy.logerr("SIDE POINT PLAN for MEDIUM BOX: trajectory execution failed")
+            robot_arm.stop()
+            robot_arm.clear_pose_targets()
+
+            # Actual path to MEDIUM BOX Disposal
+            medium_box_end_pose = point(current_point=MEDIUM_BOX_DISPOSAL_BIN_POINT, current_robot_pose=reading_parameters())
+            intermediate_pose.position.x = side_point_pose.position.x
+            intermediate_pose.position.y = round((side_point_pose.position.y + medium_box_end_pose.position.y) / 2, 3)
+            intermediate_pose.position.z = medium_box_end_pose.position.z
+            medium_box_disposal_plan = muliple_points_plan(robot=robot_arm, waypoints=[intermediate_pose, medium_box_end_pose])
+            if robot_arm.execute(medium_box_disposal_plan, wait=True):
+                rospy.logwarn("SIDE POINT PLAN for MEDIUM BOX: trajectory execution completed successfully")
+            else:
+                rospy.logerr("SIDE POINT PLAN for MEDIUM BOX: trajectory execution failed")
+            robot_arm.stop()
+            robot_arm.clear_pose_targets()
+
+
+        # REACHING SIDE POINT PLAN Execution - HEAVY BOX
+        elif side_direction == "left":
+            intermediate_pose = point(
+            current_point=[round(push_point.x, 3) + EXPECTING_POINT_OFFSET[0] + round((side_point.x - push_point.x - EXPECTING_POINT_OFFSET[0]) / 2, 3), 
+                           round(push_point.y, 3) + EXPECTING_POINT_OFFSET[1] + round(side_point.y * 3, 3), 
+                           round(push_point.z, 3) + EXPECTING_POINT_OFFSET[2]], 
+            current_robot_pose=reading_parameters())
+            side_point_plan = muliple_points_plan(robot=robot_arm, waypoints=[expecting_side_point_pose, intermediate_pose, side_point_pose])
+            if robot_arm.execute(side_point_plan, wait=True):
+                rospy.logwarn("SIDE POINT PLAN for HEAVY BOX: trajectory execution completed successfully")
+            else:
+                rospy.logerr("SIDE POINT PLAN for HEAVY BOX: trajectory execution failed")
+            robot_arm.stop()
+            robot_arm.clear_pose_targets()
+
+            # Actual path to HEAVY BOX Disposal
+            heavy_box_end_pose = point(current_point=HEAVY_BOX_DISPOSAL_BIN_POINT, current_robot_pose=reading_parameters())   
+            intermediate_pose.position.x = side_point_pose.position.x
+            intermediate_pose.position.y = round((side_point_pose.position.y + heavy_box_end_pose.position.y) / 2, 3)
+            intermediate_pose.position.z = heavy_box_end_pose.position.z
+            heavy_box_disposal_plan = muliple_points_plan(robot=robot_arm, waypoints=[intermediate_pose, heavy_box_end_pose])
+            if robot_arm.execute(heavy_box_disposal_plan, wait=True):
+                rospy.logwarn("SIDE POINT PLAN for HEAVY BOX: trajectory execution completed successfully")
+            else:
+                rospy.logerr("SIDE POINT PLAN for HEAVY BOX: trajectory execution failed")
+            robot_arm.stop()
+            robot_arm.clear_pose_targets()
         
+
         # HOME PLAN Definition & Execution
         single_point_plan(robot=robot_arm, pose=home_pose)
 

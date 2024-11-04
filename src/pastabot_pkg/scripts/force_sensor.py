@@ -10,13 +10,13 @@ from position_manager import PositionManager
 from std_msgs.msg import String
 
 
-## GLOBAL VARIABLES (Punti rispetto alle coordinate del robot) 
+## GLOBAL VARIABLES
 START_POINT_OFFSET = [0.0, -0.01, 1.025]
 END_POINT_OFFEST = [0.02, 0.01, 1.045]    
 THRESHOLD_NO_OBJECT = 0.5
 THRESHOLD_EMPTY_LIGHT = 0.2
 THRESHOLD_LIGHT_MEDIUM = 2.0
-THRESHOLD_MEDIUM_MAX = 4.0
+THRESHOLD_MEDIUM_MAX = 4.25
 current_force = None
 current_torque = None
 
@@ -80,7 +80,7 @@ def print_force_and_torque_in_region():
         current_pose: PoseStamped = robot_arm.get_current_pose()
         position = current_pose.pose.position
         
-        # Checking END EFFECTOR Pose inside Pushing Region
+        # Checking END EFFECTOR Pose inside Weight Check Region
         if ((start_push_check_region_point[0] - current_robot_pose[0]) <= position.x <= (end_push_check_region_point[0] - current_robot_pose[0]) and
             (start_push_check_region_point[1] - current_robot_pose[1]) <= position.y <= (end_push_check_region_point[1] - current_robot_pose[1]) and
             (start_push_check_region_point[2] - current_robot_pose[2]) <= position.z <= (end_push_check_region_point[2] - current_robot_pose[2])):
@@ -121,6 +121,7 @@ def print_force_and_torque_in_region():
             average_force.clear()
             average_torque.clear()
             calculation_done = True
+
         
         # Check interval
         time.sleep(0.001)
