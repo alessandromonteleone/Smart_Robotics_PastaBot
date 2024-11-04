@@ -10,6 +10,10 @@ from object_detection import ObjectDetection
 import cv2 as cv
 
 
+## GLOBAL VARIABLES
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+
 ## CLASS
 class BoxSpawner:
     def __init__(self):
@@ -25,9 +29,7 @@ class BoxSpawner:
         
         # Get the package path
         self.rospack = rospkg.RosPack()
-        print(os.getcwd())
-        self.package_path = os.getcwd() + '/src/pastabot_pkg/'
-        #self.package_path = self.rospack.get_path('pastabot_pkg')
+        self.package_path = '../'
         # Paths to SDF files
         self.sdf_paths = {
             'light': os.path.join(self.package_path, 'models', 'box_light', 'model.sdf'),

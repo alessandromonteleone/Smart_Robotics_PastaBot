@@ -134,7 +134,7 @@ def robot_move():
             current_robot_pose=reading_parameters())
         single_point_plan(robot=robot_arm, pose=expecting_side_point_pose)
 
-        # REACHING SIDE POINT PLAN Definition
+        # SIDE POINT
         side_point, side_direction = position_manager.wait_for_side_point_and_dest()
         side_point_pose = point(
             current_point=[round(side_point.x, 3) + SIDE_POINT_OFFSET[0], 
@@ -143,7 +143,7 @@ def robot_move():
             current_robot_pose=reading_parameters())
         
 
-        # REACHING SIDE POINT PLAN Execution - LIGHT BOX
+        # REACHING SIDE POINT PLAN Definition & Execution - LIGHT BOX
         if side_direction == "front":
             side_point_plan = muliple_points_plan(robot=robot_arm, waypoints=[expecting_side_point_pose, side_point_pose])
             if robot_arm.execute(side_point_plan, wait=True):
@@ -158,7 +158,7 @@ def robot_move():
             single_point_plan(robot=robot_arm, pose=light_box_end_pose)
 
 
-        # REACHING SIDE POINT PLAN Execution - MEDIUM BOX
+        # REACHING SIDE POINT PLAN Definition & Execution - MEDIUM BOX
         elif side_direction == "right":
             intermediate_pose = point(
             current_point=[round(push_point.x, 3) + EXPECTING_POINT_OFFSET[0] + round((side_point.x - push_point.x - EXPECTING_POINT_OFFSET[0]) / 2, 3), 
@@ -187,7 +187,7 @@ def robot_move():
             robot_arm.clear_pose_targets()
 
 
-        # REACHING SIDE POINT PLAN Execution - HEAVY BOX
+        # REACHING SIDE POINT PLAN Definition & Execution - HEAVY BOX
         elif side_direction == "left":
             intermediate_pose = point(
             current_point=[round(push_point.x, 3) + EXPECTING_POINT_OFFSET[0] + round((side_point.x - push_point.x - EXPECTING_POINT_OFFSET[0]) / 2, 3), 

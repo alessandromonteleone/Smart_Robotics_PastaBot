@@ -115,5 +115,8 @@
         <param name="arg_Pitch" value="$(arg arg_Pitch)" />
         <param name="arg_Yaw" value="$(arg arg_Yaw)" />
     </node>
-    
+
+    <!-- Execute the Python script to spawn boxes and reconizing them -->
+    <node name="load_models" pkg="pastabot_pkg" type="load_models.py" output="screen" launch-prefix="gnome-terminal -- bash -c" 
+    args="$(find pastabot_pkg)/scripts/load_models.py"/>
 </launch>

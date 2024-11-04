@@ -107,7 +107,7 @@ class ObjectDetection:
         self.pixel_tolerance = 3
         self.area_threshold = 10
         self.rgb_threshold = [30, 30, 30]
-        self.homography_matrix = np.load(os.getcwd()+'/src/pastabot_pkg/scripts/homography_matrix.npy') # TODO: change when in roslaunch
+        self.homography_matrix = np.load(os.getcwd() + '/homography_matrix.npy') # TODO: change when in roslaunch
 
         self.stop_detector_sub = rospy.Subscriber("force_check/stop_detector", Bool, self.stop_detector_callback)
         self.box_type_sub = rospy.Subscriber("box/type_topic", String, self.box_type_callback)
@@ -118,20 +118,28 @@ class ObjectDetection:
             "HEAVY BOX": "left",
         }
 
+        self.first = True
+        self.is_stopped = True
+        self.start_end_points = {'start': None, 'end': None}
+        self.counter_position = 0
+        self.push_point = None
+        self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.camera_callback)
+
+
     def start(self):
         self.first = True
         self.is_stopped = False
         self.start_end_points = {'start':None, 'end':None}
-        self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.camera_callback)
+
         #self.bridge_object = CvBridge()
         self.counter_position = 0
         self.push_point = None
         while not self.is_stopped:
-            pass
+            rospy.sleep(0.001)
 
     def stop(self):
-        self.image_sub.unregister()
-        print("unregistered from /camera/image_raw")
+        # self.image_sub.unregister()
+        print("Detector stopped")
         self.is_stopped = True
 
     def box_type_callback(self, msg):
@@ -143,7 +151,7 @@ class ObjectDetection:
             return
        
         if box_type == "No Object":
-            # Stops Detector when box falls over the table
+            # Stops Detector when box falls from the table
             self.stop() 
         else:
             dest = self.type2dest_mapping[box_type]
@@ -165,6 +173,8 @@ class ObjectDetection:
             if self.first:
                 self.first = False
                 #print("first frame")
+                return
+            if self.is_stopped:
                 return
         except CvBridgeError as e:
             print(e)
