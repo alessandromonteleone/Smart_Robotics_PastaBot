@@ -67,7 +67,7 @@ def single_point_plan(robot, pose):
 
 
 def muliple_points_plan(robot, waypoints=[]):
-    plan, fraction = robot.compute_cartesian_path(waypoints, eef_step=0.025)
+    plan, fraction = robot.compute_cartesian_path(waypoints, eef_step=0.01)
     if fraction == 1.0:
         rospy.logwarn("MULTIPLE POINTS PLAN: trajectory planned successfully")
     else:
