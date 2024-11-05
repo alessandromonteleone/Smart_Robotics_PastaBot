@@ -1,3 +1,3 @@
 catkin_make
 source devel/setup.bash
-roslaunch pastabot_pkg gofa_gazebo_luca.launch
+roslaunch pastabot_pkg gofa_gazebo_final.launch

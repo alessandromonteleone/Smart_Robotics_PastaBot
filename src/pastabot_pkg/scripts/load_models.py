@@ -17,7 +17,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ## CLASS
 class BoxSpawner:
     def __init__(self):
-        rospy.init_node('box_spawner')
+        rospy.init_node('object_detector')
         
         # Wait for Gazebo services to be available
         rospy.wait_for_service('/gazebo/spawn_sdf_model')
