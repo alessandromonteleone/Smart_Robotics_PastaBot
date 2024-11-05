@@ -1,4 +1,5 @@
-# PastaBot: Force Sensing for Pasta Packaging Automation
+# PastaBot: 
+## Force Sensing for Pasta Packaging Automation
 <p align="center">
   <img src="./docs/logo.jpg" width="100%" />
 </p>
